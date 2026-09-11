@@ -27,6 +27,14 @@ function readStoredLocale(): AppLocale {
 }
 
 /**
+ * Keeps the document language attribute aligned with the active locale.
+ */
+function syncDocumentLang(locale: AppLocale): void {
+  if (typeof document === 'undefined') return
+  document.documentElement.lang = locale
+}
+
+/**
  * Maps an i18next language code to a supported app locale.
  */
 export function resolveAppLocale(language: string | undefined): AppLocale {
@@ -46,13 +54,16 @@ export function resolveAppLocale(language: string | undefined): AppLocale {
  */
 export async function persistAppLocale(locale: AppLocale): Promise<void> {
   await i18n.changeLanguage(locale)
+  syncDocumentLang(locale)
   if (typeof window === 'undefined') return
   window.localStorage.setItem(LOCALE_STORAGE_KEY, locale)
 }
 
+const bootLocale = readStoredLocale()
+
 void i18n.use(initReactI18next).init({
   resources: dictionaryResources,
-  lng: readStoredLocale(),
+  lng: bootLocale,
   fallbackLng: defaultLocale,
   supportedLngs: [...supportedLocales],
   ns: [...dictionaryNamespaces],
@@ -62,5 +73,7 @@ void i18n.use(initReactI18next).init({
   },
   returnNull: false,
 })
+
+syncDocumentLang(bootLocale)
 
 export default i18n

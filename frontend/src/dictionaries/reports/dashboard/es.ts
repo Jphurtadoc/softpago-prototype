@@ -1,7 +1,8 @@
 /** Spanish scaffold for the reports dashboard page. */
 const reportsDashboardEs = {
   title: 'Reportes',
-  subtitle: 'Consulta métricas y reportes',
+  subtitle: 'Revisa reportes y métricas de tu operación.',
+  emptyTitle: 'Aún no hay reportes',
 } as const
 
 export default reportsDashboardEs

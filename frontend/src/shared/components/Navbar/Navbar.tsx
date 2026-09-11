@@ -5,6 +5,7 @@ import {
   THEME_MODE_ICON_SIZE,
   THEME_MODE_ICON_STROKE,
 } from '@/shared/icons/theme-mode-icons'
+import { useSidebarBehavior } from '@/shared/themes/sidebar-behavior-context'
 import { DEFAULT_ITEMS, type NavItem } from './defaultNavItems'
 import './Navbar.css'
 
@@ -12,8 +13,11 @@ export type { NavItem }
 
 export type ThemePreference = 'light' | 'dark' | 'system'
 
+export type ActiveUserMenuItem = 'account' | 'settings'
+
 export interface NavbarProps {
-  activeItem?: string
+  /** Active nav item id, or `null` when no main-nav route is selected. */
+  activeItem?: string | null
   onItemClick?: (item: NavItem) => void
   items?: NavItem[]
   logo?: ReactNode
@@ -31,6 +35,8 @@ export interface NavbarProps {
   onLogoutClick?: () => void
   onSettingsClick?: () => void
   onAccountClick?: () => void
+  /** Active avatar-menu entry on the settings route. */
+  activeUserMenuItem?: ActiveUserMenuItem | null
 }
 
 const IconPin = ({ filled }: { filled: boolean }) => (
@@ -110,6 +116,11 @@ const BRAND_SRC = {
   dark: '/logo_secondary.svg',
 } as const
 
+const MARK_SRC = {
+  light: '/favicon.svg',
+  dark: '/favicon_secondary.svg',
+} as const
+
 function Navbar({
   activeItem,
   onItemClick,
@@ -129,8 +140,12 @@ function Navbar({
   onLogoutClick,
   onSettingsClick,
   onAccountClick,
+  activeUserMenuItem = null,
 }: NavbarProps) {
-  const { t } = useTranslation('common/theme')
+  const { t } = useTranslation('common/nav')
+  const { t: tTheme } = useTranslation('common/theme')
+  const { preference: sidebarBehavior, setPreference: setSidebarBehavior } =
+    useSidebarBehavior()
   const menuId = useId()
   const menuRef = useRef<HTMLDivElement | null>(null)
   const moreButtonRef = useRef<HTMLButtonElement | null>(null)
@@ -143,17 +158,18 @@ function Navbar({
     themePreference ?? 'system',
   )
   const [internalTheme, setInternalTheme] = useState<'light' | 'dark'>(defaultTheme)
-  const [pinned, setPinned] = useState(false)
   const [isHovered, setIsHovered] = useState(false)
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
 
-  const active = activeItem ?? internalActive
+  const active = activeItem !== undefined ? activeItem : internalActive
   const expanded = isExpanded ?? internalExpanded
   const currentPreference = themePreference ?? internalPreference
   const currentTheme = theme ?? internalTheme
-  const activeIndex = items.findIndex((item) => item.id === active)
+  const pinned = sidebarBehavior === 'fixed'
+  const activeIndex = active == null ? -1 : items.findIndex((item) => item.id === active)
   const brandSrc = BRAND_SRC[currentTheme]
-  const displayName = userName?.trim().split(/\s+/)[0] || 'Usuario'
+  const markSrc = MARK_SRC[currentTheme]
+  const displayName = userName?.trim().split(/\s+/)[0] || t('userFallback')
   const displayRole = userRole
     ? `${userRole.charAt(0).toUpperCase()}${userRole.slice(1).toLowerCase()}`
     : undefined
@@ -173,22 +189,39 @@ function Navbar({
   const handleMouseEnter = () => {
     setIsHovered(true)
     if (isUserMenuOpen) return
+    if (sidebarBehavior === 'collapse') return
     setExpanded(true)
   }
 
   const handleMouseLeave = () => {
     setIsHovered(false)
-    if (!pinned && !isUserMenuOpen) {
-      setExpanded(false)
-    }
+    if (sidebarBehavior === 'fixed' || isUserMenuOpen) return
+    setExpanded(false)
   }
 
   const togglePin = () => {
     if (isUserMenuOpen) return
-    const next = !pinned
-    setPinned(next)
-    setExpanded(next || isHovered)
+    if (sidebarBehavior === 'fixed') {
+      setSidebarBehavior('automatic')
+      setExpanded(isHovered)
+      return
+    }
+    setSidebarBehavior('fixed')
+    setExpanded(true)
   }
+
+  useEffect(() => {
+    if (isUserMenuOpen) return
+    if (sidebarBehavior === 'fixed') {
+      setExpanded(true)
+      return
+    }
+    if (sidebarBehavior === 'collapse') {
+      setExpanded(false)
+      return
+    }
+    setExpanded(isHovered)
+  }, [sidebarBehavior, isUserMenuOpen, isHovered])
 
   const handleThemeSelect = (next: ThemePreference) => {
     if (themePreference === undefined) {
@@ -209,11 +242,19 @@ function Navbar({
 
   const handleCloseUserMenu = () => {
     setIsUserMenuOpen(false)
+    if (sidebarBehavior === 'fixed') {
+      setExpanded(true)
+      return
+    }
+    if (sidebarBehavior === 'automatic' && isHovered) {
+      setExpanded(true)
+      return
+    }
+    setExpanded(false)
   }
 
   const handleOpenUserMenu = () => {
     setIsUserMenuOpen(true)
-    setPinned(false)
     setExpanded(false)
   }
 
@@ -232,11 +273,11 @@ function Navbar({
       if (menuRef.current?.contains(target)) return
       if (moreButtonRef.current?.contains(target)) return
       if (avatarButtonRef.current?.contains(target)) return
-      setIsUserMenuOpen(false)
+      handleCloseUserMenu()
     }
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
-        setIsUserMenuOpen(false)
+        handleCloseUserMenu()
       }
     }
     document.addEventListener('mousedown', handlePointerDown)
@@ -251,18 +292,26 @@ function Navbar({
     <aside
       className={`sidebar${expanded ? ' sidebar--expanded' : ''}`}
       data-theme={currentTheme}
-      aria-label="Navegación principal"
+      aria-label={t('mainNavAria')}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
       <div className="sidebar__header">
         <div className="sidebar__brand">
           {logo ?? (
-            <img
-              src={brandSrc}
-              alt="SoftPago"
-              className={`sidebar__logo${expanded ? ' sidebar__logo--expanded' : ' sidebar__logo--collapsed'}`}
-            />
+            <>
+              <img
+                src={markSrc}
+                alt=""
+                aria-hidden="true"
+                className="sidebar__logo-mark"
+              />
+              <img
+                src={brandSrc}
+                alt="SoftPago"
+                className="sidebar__logo-full"
+              />
+            </>
           )}
         </div>
 
@@ -270,7 +319,7 @@ function Navbar({
           type="button"
           className={`sidebar__pin${pinned ? ' sidebar__pin--active' : ''}`}
           onClick={togglePin}
-          aria-label={pinned ? 'Desanclar menú' : 'Anclar menú abierto'}
+          aria-label={pinned ? t('unpinMenu') : t('pinMenu')}
           aria-pressed={pinned}
         >
           <IconPin filled={pinned} />
@@ -281,28 +330,30 @@ function Navbar({
         <span
           className="sidebar__indicator"
           style={{
-            transform: `translateY(${activeIndex * (ITEM_SIZE + ITEM_GAP)}px)`,
+            opacity: activeIndex >= 0 ? 1 : 0,
+            transform: `translateY(${Math.max(activeIndex, 0) * (ITEM_SIZE + ITEM_GAP)}px)`,
           }}
           aria-hidden="true"
         />
 
         {items.map((item) => {
           const isActive = item.id === active
+          const itemTitle = t(item.titleKey)
           return (
             <button
               key={item.id}
               type="button"
               role="tab"
               aria-selected={isActive}
-              aria-label={item.title}
+              aria-label={itemTitle}
               className={`sidebar__item${isActive ? ' sidebar__item--active' : ''}`}
               onClick={() => handleClick(item)}
             >
               <span className="sidebar__item-content">
                 <span className="sidebar__item-icon">{item.icon}</span>
-                <span className="sidebar__item-label">{item.title}</span>
+                <span className="sidebar__item-label">{itemTitle}</span>
               </span>
-              {!expanded && <span className="sidebar__tooltip">{item.title}</span>}
+              {!expanded && <span className="sidebar__tooltip">{itemTitle}</span>}
             </button>
           )
         })}
@@ -314,7 +365,7 @@ function Navbar({
             ref={avatarButtonRef}
             type="button"
             className="sidebar__avatar-button"
-            aria-label={expanded ? displayName : 'Menú de usuario'}
+            aria-label={expanded ? displayName : t('userMenuAria')}
             aria-haspopup={expanded ? undefined : 'menu'}
             aria-expanded={expanded ? undefined : isUserMenuOpen}
             onClick={() => {
@@ -332,16 +383,21 @@ function Navbar({
             </div>
           </button>
           <div className="sidebar__user-meta">
-            <span className="sidebar__user-name">{displayName}</span>
-            {displayRole && (
-              <span className="sidebar__user-role">{displayRole}</span>
+            <div className="sidebar__user-name-row">
+              <span className="sidebar__user-name">{displayName}</span>
+              {displayRole && (
+                <span className="sidebar__user-role-chip">{displayRole}</span>
+              )}
+            </div>
+            {userEmail && (
+              <span className="sidebar__user-email">{userEmail}</span>
             )}
           </div>
           <button
             ref={moreButtonRef}
             type="button"
             className="sidebar__user-more"
-            aria-label="Menú de usuario"
+            aria-label={t('userMenuAria')}
             aria-haspopup="menu"
             aria-expanded={isUserMenuOpen}
             aria-controls={isUserMenuOpen ? menuId : undefined}
@@ -356,7 +412,7 @@ function Navbar({
               id={menuId}
               className="sidebar__user-menu"
               role="menu"
-              aria-label="Menú de usuario"
+              aria-label={t('userMenuAria')}
             >
               <div className="sidebar__user-menu-profile">
                 <div className="sidebar__avatar sidebar__avatar--menu">
@@ -367,7 +423,12 @@ function Navbar({
                   )}
                 </div>
                 <div className="sidebar__user-menu-profile-meta">
-                  <span className="sidebar__user-name">{displayName}</span>
+                  <div className="sidebar__user-name-row">
+                    <span className="sidebar__user-name">{displayName}</span>
+                    {displayRole && (
+                      <span className="sidebar__user-role-chip">{displayRole}</span>
+                    )}
+                  </div>
                   {userEmail && (
                     <span className="sidebar__user-email">{userEmail}</span>
                   )}
@@ -376,8 +437,13 @@ function Navbar({
 
               <button
                 type="button"
-                className="sidebar__user-menu-item"
+                className={`sidebar__user-menu-item${
+                  activeUserMenuItem === 'account'
+                    ? ' sidebar__user-menu-item--active'
+                    : ''
+                }`}
                 role="menuitem"
+                aria-current={activeUserMenuItem === 'account' ? 'page' : undefined}
                 onClick={() => {
                   handleCloseUserMenu()
                   onAccountClick?.()
@@ -386,13 +452,20 @@ function Navbar({
                 <span className="sidebar__user-menu-icon">
                   <IconAccount />
                 </span>
-                <span>Cuenta</span>
+                <span>{t('account')}</span>
               </button>
 
               <button
                 type="button"
-                className="sidebar__user-menu-item"
+                className={`sidebar__user-menu-item${
+                  activeUserMenuItem === 'settings'
+                    ? ' sidebar__user-menu-item--active'
+                    : ''
+                }`}
                 role="menuitem"
+                aria-current={
+                  activeUserMenuItem === 'settings' ? 'page' : undefined
+                }
                 onClick={() => {
                   handleCloseUserMenu()
                   onSettingsClick?.()
@@ -401,17 +474,17 @@ function Navbar({
                 <span className="sidebar__user-menu-icon">
                   <IconSettings />
                 </span>
-                <span>Configuraciones</span>
+                <span>{t('settings')}</span>
               </button>
 
               <div className="sidebar__user-menu-theme" role="none">
                 <span className="sidebar__user-menu-theme-label">
-                  {t('groupLabel')}
+                  {tTheme('groupLabel')}
                 </span>
                 <div
                   className="sidebar__theme-segment"
                   role="group"
-                  aria-label={t('groupLabel')}
+                  aria-label={tTheme('groupLabel')}
                 >
                   <span
                     className="sidebar__theme-segment-thumb"
@@ -430,7 +503,7 @@ function Navbar({
                         className={`sidebar__theme-segment-btn${
                           isSelected ? ' sidebar__theme-segment-btn--active' : ''
                         }`}
-                        aria-label={t(value)}
+                        aria-label={tTheme(value)}
                         aria-pressed={isSelected}
                         onClick={() => handleThemeSelect(value)}
                       >
@@ -458,7 +531,7 @@ function Navbar({
                   <span className="sidebar__user-menu-icon">
                     <IconLogout />
                   </span>
-                  <span>Cerrar sesión</span>
+                  <span>{t('logout')}</span>
                 </button>
               )}
             </div>

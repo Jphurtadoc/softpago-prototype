@@ -19,13 +19,21 @@ import {
 
 function filterRoutes(params: GetRoutesParams): Route[] {
   const store = getPrototypeStore()
-  if (!params.search) {
-    return store.routes
-  }
-  const query = params.search.toLowerCase()
   return store.routes.filter((route) => {
-    const haystack = `${route.name} ${route.description ?? ''}`.toLowerCase()
-    return haystack.includes(query)
+    if (params.search) {
+      const query = params.search.toLowerCase()
+      const haystack = `${route.name} ${route.description ?? ''}`.toLowerCase()
+      if (!haystack.includes(query)) return false
+    }
+    if (typeof params.hasLoans === 'boolean') {
+      const routeHasLoans = route.loanCount > 0
+      if (routeHasLoans !== params.hasLoans) return false
+    }
+    if (typeof params.hasCollectors === 'boolean') {
+      const routeHasCollectors = route.debtCollectors.length > 0
+      if (routeHasCollectors !== params.hasCollectors) return false
+    }
+    return true
   })
 }
 

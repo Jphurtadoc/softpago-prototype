@@ -1,16 +1,17 @@
-import type { ReactNode } from 'react';
+import type { ReactNode } from 'react'
 
 export interface NavItem {
-  id: string;
-  title: string;
-  url: string;
-  icon: ReactNode;
+  id: string
+  /** i18n key under `common/nav` (e.g. `items.inicio`). */
+  titleKey: string
+  url: string
+  icon: ReactNode
 }
 
 export const DEFAULT_ITEMS: NavItem[] = [
   {
     id: 'inicio',
-    title: 'Overview',
+    titleKey: 'items.inicio',
     url: '/inicio',
     icon: (
       <svg
@@ -62,7 +63,7 @@ export const DEFAULT_ITEMS: NavItem[] = [
 
   {
     id: 'pagos',
-    title: 'Pagos',
+    titleKey: 'items.pagos',
     url: '/pagos',
     icon: (
       <svg
@@ -104,7 +105,7 @@ export const DEFAULT_ITEMS: NavItem[] = [
 
   {
     id: 'reportes',
-    title: 'Reportes',
+    titleKey: 'items.reportes',
     url: '/reportes',
     icon: (
       <svg
@@ -131,37 +132,8 @@ export const DEFAULT_ITEMS: NavItem[] = [
   },
 
   {
-    id: 'configuraciones',
-    title: 'Configuraciones',
-    url: '/configuraciones',
-    icon: (
-      <svg
-        width="19"
-        height="19"
-        viewBox="0 0 24 24"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <circle
-          cx="12"
-          cy="12"
-          r="3.1"
-          stroke="currentColor"
-          strokeWidth="1.75"
-        />
-        <path
-          d="M19.4 13.5c.06-.49.1-.99.1-1.5s-.04-1.01-.1-1.5l2.02-1.58a.5.5 0 0 0 .12-.63l-1.92-3.32a.5.5 0 0 0-.6-.22l-2.39.96a7.4 7.4 0 0 0-1.3-.75l-.36-2.54a.49.49 0 0 0-.5-.42h-3.84a.49.49 0 0 0-.5.42l-.36 2.54c-.47.2-.9.45-1.3.75l-2.39-.96a.5.5 0 0 0-.6.22L2.56 8.29a.5.5 0 0 0 .12.63L4.7 10.5c-.06.49-.1.99-.1 1.5s.04 1.01.1 1.5l-2.02 1.58a.5.5 0 0 0-.12.63l1.92 3.32c.13.22.4.31.6.22l2.39-.96c.4.3.83.55 1.3.75l.36 2.54c.04.24.25.42.5.42h3.84c.25 0 .46-.18.5-.42l.36-2.54c.47-.2.9-.45 1.3-.75l2.39.96c.2.09.47 0 .6-.22l1.92-3.32a.5.5 0 0 0-.12-.63L19.4 13.5Z"
-          stroke="currentColor"
-          strokeWidth="1.75"
-          strokeLinejoin="round"
-        />
-      </svg>
-    ),
-  },
-
-  {
     id: 'prestamos',
-    title: 'Préstamos',
+    titleKey: 'items.prestamos',
     url: '/loans',
     icon: (
       <svg
@@ -192,7 +164,7 @@ export const DEFAULT_ITEMS: NavItem[] = [
 
   {
     id: 'rutas',
-    title: 'Rutas',
+    titleKey: 'items.rutas',
     url: '/routes',
     icon: (
       <svg
@@ -231,4 +203,4 @@ export const DEFAULT_ITEMS: NavItem[] = [
       </svg>
     ),
   },
-];
+]

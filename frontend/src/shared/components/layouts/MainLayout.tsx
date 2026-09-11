@@ -1,7 +1,8 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import MobileAppBar from '../MobileAppBar/MobileAppBar'
-import Navbar from '../Navbar/Navbar'
+import Navbar, { type ActiveUserMenuItem } from '../Navbar/Navbar'
 import { DEFAULT_ITEMS, type NavItem } from '../Navbar/defaultNavItems'
 import { ConfirmDialog } from '../ConfirmDialog/ConfirmDialog'
 import {
@@ -13,18 +14,52 @@ import {
 import { useColorMode } from '@/shared/themes/color-mode-context'
 import './MainLayout.css'
 
+/**
+ * Resolves the sidebar active item from the current path.
+ * Returns `null` when the route is outside main nav (e.g. settings via avatar menu).
+ */
+function getActiveNavItemId(pathname: string, items: NavItem[]): string | null {
+  let bestMatch: NavItem | undefined
+  for (const item of items) {
+    const isMatch =
+      pathname === item.url || pathname.startsWith(`${item.url}/`)
+    if (!isMatch) continue
+    if (!bestMatch || item.url.length > bestMatch.url.length) {
+      bestMatch = item
+    }
+  }
+  return bestMatch?.id ?? null
+}
+
+/**
+ * Resolves which avatar-menu entry is active on the settings route.
+ */
+function getActiveUserMenuItem(
+  pathname: string,
+  search: string,
+): ActiveUserMenuItem | null {
+  if (pathname !== '/configuraciones') return null
+  const tab = new URLSearchParams(search).get('tab')
+  if (tab === 'cuenta') return 'account'
+  return 'settings'
+}
+
 export function MainLayout() {
+  const { t } = useTranslation('common/nav')
   const location = useLocation()
   const navigate = useNavigate()
   const { preference, resolvedMode, setPreference } = useColorMode()
   const [expanded, setExpanded] = useState(false)
   const [logoutDialogOpen, setLogoutDialogOpen] = useState(false)
-  const active =
-    DEFAULT_ITEMS.find((item) => item.url === location.pathname)?.id ??
-    DEFAULT_ITEMS[0].id
+  const active = getActiveNavItemId(location.pathname, DEFAULT_ITEMS)
+  const activeUserMenuItem = getActiveUserMenuItem(
+    location.pathname,
+    location.search,
+  )
   const userName = getAuthenticatedUserName()
   const userRole = getAuthenticatedUserRole()
   const userEmail = getAuthenticatedUserEmail()
+  const userFallback = t('userFallback')
 
   const handleItemClick = (item: NavItem) => {
     navigate(item.url)
@@ -52,13 +87,14 @@ export function MainLayout() {
         theme={resolvedMode}
         themePreference={preference}
         onThemeChange={setPreference}
-        userName={userName ?? 'Usuario'}
+        userName={userName ?? userFallback}
         userRole={userRole ?? undefined}
         userEmail={userEmail ?? undefined}
         userAvatarUrl={undefined}
         onAccountClick={handleAccountClick}
         onSettingsClick={handleSettingsClick}
         onLogoutClick={() => setLogoutDialogOpen(true)}
+        activeUserMenuItem={activeUserMenuItem}
       />
       <Navbar
         activeItem={active}
@@ -71,7 +107,8 @@ export function MainLayout() {
         onLogoutClick={() => setLogoutDialogOpen(true)}
         onSettingsClick={handleSettingsClick}
         onAccountClick={handleAccountClick}
-        userName={userName ?? 'Usuario'}
+        activeUserMenuItem={activeUserMenuItem}
+        userName={userName ?? userFallback}
         userRole={userRole ?? undefined}
         userEmail={userEmail ?? undefined}
         userAvatarUrl={undefined}
@@ -84,10 +121,10 @@ export function MainLayout() {
       <ConfirmDialog
         open={logoutDialogOpen}
         theme={resolvedMode}
-        title="Cerrar sesión"
-        description="¿Estás seguro que deseas cerrar sesión?"
-        confirmLabel="Sí, cerrar sesión"
-        cancelLabel="No"
+        title={t('logoutDialog.title')}
+        description={t('logoutDialog.description')}
+        confirmLabel={t('logoutDialog.confirm')}
+        cancelLabel={t('logoutDialog.cancel')}
         onConfirm={handleLogoutConfirm}
         onCancel={() => setLogoutDialogOpen(false)}
       />

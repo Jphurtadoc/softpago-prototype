@@ -1,5 +1,6 @@
 /** English copy for the Overview (home) dashboard. */
 const homeOverviewEn = {
+  title: 'Overview',
   welcome: 'Hello, {{name}}',
   subtitle: 'A quick look at your operation.',
   loadError: 'Unable to load the dashboard.',
@@ -12,13 +13,30 @@ const homeOverviewEn = {
   },
   balance: {
     title: 'Balance',
-    badge: '+{{percent}}% this month',
+    myBalance: 'My balance',
     dayStart: 'Day start',
-    paymentsToday: 'Payments today',
+    incoming: 'Received',
+    loan: 'Loans',
+    profit: 'Profit',
+    newLoans: 'New',
+    repeatClients: 'Clients',
+    collection: 'Collection',
+    toCollect: 'Total to collect',
+    collected: 'Collected',
+    progressLabel: 'Collection progress {{percent}}%',
     showMetric: 'Show {{label}}',
     hideMetric: 'Hide {{label}}',
     openPayments: 'Go to payments',
     currency: 'COP',
+  },
+  kpis: {
+    routes: 'Routes',
+    clients: 'Clients',
+    loanMoney: 'In loans',
+  },
+  chart: {
+    title: 'Recent balance',
+    subtitle: 'Last 6 months',
   },
   quickActions: {
     title: 'Quick actions',

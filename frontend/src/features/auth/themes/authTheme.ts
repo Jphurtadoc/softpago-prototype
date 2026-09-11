@@ -17,7 +17,9 @@ export function createAuthTheme(mode: AuthPaletteMode): Theme {
     primary,
     secondary,
     backgroundDark,
+    backgroundLight,
     surfaceDark,
+    surfaceLight,
     linkDark,
     linkLight,
     linkHover,
@@ -37,8 +39,8 @@ export function createAuthTheme(mode: AuthPaletteMode): Theme {
         contrastText: primary,
       },
       background: {
-        default: isDark ? backgroundDark : '#f4f7f5',
-        paper: isDark ? surfaceDark : '#ffffff',
+        default: isDark ? backgroundDark : backgroundLight,
+        paper: isDark ? surfaceDark : surfaceLight,
       },
       text: {
         primary: isDark ? '#f2f7f4' : primary,
@@ -67,7 +69,7 @@ export function createAuthTheme(mode: AuthPaletteMode): Theme {
       MuiCssBaseline: {
         styleOverrides: {
           body: {
-            backgroundColor: isDark ? backgroundDark : '#f4f7f5',
+            backgroundColor: isDark ? backgroundDark : backgroundLight,
           },
         },
       },
@@ -83,6 +85,14 @@ export function createAuthTheme(mode: AuthPaletteMode): Theme {
               '& input, & textarea': {
                 ...(isDark ? { color: '#f2f7f4' } : {}),
               },
+              '& input:-webkit-autofill, & input:-webkit-autofill:hover, & input:-webkit-autofill:focus, & input:-webkit-autofill:active, & textarea:-webkit-autofill, & textarea:-webkit-autofill:hover, & textarea:-webkit-autofill:focus, & textarea:-webkit-autofill:active':
+                {
+                  WebkitTextFillColor: isDark ? '#f2f7f4' : primary,
+                  caretColor: isDark ? '#f2f7f4' : primary,
+                  WebkitBoxShadow: `0 0 0 1000px ${isDark ? '#1e2220' : '#e8efe9'} inset`,
+                  boxShadow: `0 0 0 1000px ${isDark ? '#1e2220' : '#e8efe9'} inset`,
+                  transition: 'background-color 99999s ease-in-out 0s',
+                },
               '& fieldset': {
                 borderColor: isDark ? alpha(secondary, 0.22) : alpha(primary, 0.16),
               },

@@ -1,0 +1,67 @@
+/** English copy for the loan details page. */
+const loansDetailsEn = {
+  title: 'Loan details',
+  subtitle: 'View loan information and repayment details.',
+  loading: 'Loading loan details…',
+  missingId: 'Loan ID is missing',
+  notFound: 'Loan not found',
+  back: 'Back',
+  backToList: 'Back to loans',
+  edit: 'Edit',
+  tabsLabel: 'Loan sections',
+  tabs: {
+    parties: 'Parties',
+    financial: 'Financial',
+    schedule: 'Schedule',
+    record: 'Record',
+  },
+  hero: {
+    totalLabel: 'Total amount',
+    principalInterest: 'Principal {{amount}} · Interest {{rate}}% ({{type}})',
+    installmentsPaid: 'Installments paid',
+  },
+  metrics: {
+    installment: 'Installment',
+    remaining: 'Remaining',
+    remainingHint: 'Estimated balance',
+    dueDate: 'Due date',
+    started: 'Started {{date}}',
+    interest: 'Interest',
+  },
+  sections: {
+    parties: 'Parties',
+    partiesDesc: 'People and assignment linked to this loan.',
+    financial: 'Financial information',
+    financialDesc: 'Amounts and interest configuration.',
+    schedule: 'Repayment schedule',
+    scheduleDesc: 'Frequency and installment progress.',
+    record: 'Record information',
+    recordDesc: 'Audit timestamps for this loan.',
+  },
+  fields: {
+    loanId: 'Loan ID',
+    lenderId: 'Lender ID',
+    borrowerId: 'Borrower ID',
+    routeId: 'Route ID',
+    debtCollectorId: 'Debt collector ID',
+    amount: 'Amount',
+    interest: 'Interest',
+    totalAmount: 'Total amount',
+    installmentAmount: 'Installment amount',
+    frequency: 'Frequency',
+    installments: 'Installments',
+    startDate: 'Start date',
+    dueDate: 'Due date',
+    created: 'Created',
+    updated: 'Updated',
+    notAssigned: 'Not assigned',
+  },
+  progress: {
+    payment: 'Payment progress',
+  },
+  errors: {
+    load: 'Unable to load loan',
+  },
+} as const
+
+export default loansDetailsEn

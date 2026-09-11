@@ -1,20 +1,21 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import {
-  Alert,
-  Box,
-  Button,
-  CircularProgress,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-  Stack,
-  TextField,
-  Typography,
-} from '@mui/material';
+import { Plus, Eye, Pencil, Trash2, CalendarClock, Percent } from 'lucide-react';
+import { Alert, Box, Button, Stack } from '@mui/material';
 
-import TableComponent from '../../../shared/components/TableComponent';
+import {
+  DataTable,
+  DataTableStatusChip,
+  type DataTableAction,
+  type DataTableColumn,
+  type DataTableFilter,
+  type DataTableFilterValues,
+  type DataTableStatusTab,
+  type DataTableTone,
+} from '@/shared/components/DataTable';
+import { PageHeader } from '@/shared/components/layouts/PageHeader';
+
 import { loansService } from '../services/loans.service';
 import type {
   GetLoansParams,
@@ -25,6 +26,13 @@ import type {
 } from '../types/loans.types';
 
 const STATUS_OPTIONS: LoanStatus[] = ['ACTIVE', 'PAID', 'OVERDUE', 'CANCELLED'];
+
+const STATUS_TONE: Record<LoanStatus, DataTableTone> = {
+  ACTIVE: 'brand',
+  PAID: 'success',
+  OVERDUE: 'danger',
+  CANCELLED: 'neutral',
+};
 
 const FREQUENCY_OPTIONS: LoanFrequency[] = [
   'DAILY',
@@ -45,25 +53,11 @@ const formatCurrency = (value: number) =>
 const formatDate = (value: string) =>
   new Date(value).toLocaleDateString('es-CO');
 
-const formatStatus = (value: LoanStatus) =>
-  value
-    .replace('_', ' ')
-    .toLowerCase()
-    .replace(/^\w/, (character) => character.toUpperCase());
-
-const formatFrequency = (value: LoanFrequency) =>
-  value
-    .replace('_', ' ')
-    .toLowerCase()
-    .replace(/^\w/, (character) => character.toUpperCase());
-
-const formatInterestType = (value: LoanInterestType) =>
-  value
-    .replace('_', ' ')
-    .toLowerCase()
-    .replace(/^\w/, (character) => character.toUpperCase());
-
+/**
+ * Loans list page using the shared DataTable surface.
+ */
 export default function LoansPage() {
+  const { t } = useTranslation('loans/list');
   const navigate = useNavigate();
 
   const [loans, setLoans] = useState<Loan[]>([]);
@@ -76,6 +70,7 @@ export default function LoansPage() {
   const [status, setStatus] = useState<LoanStatus | ''>('');
   const [frequency, setFrequency] = useState<LoanFrequency | ''>('');
   const [interestType, setInterestType] = useState<LoanInterestType | ''>('');
+  const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
 
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -97,22 +92,31 @@ export default function LoansPage() {
     try {
       setLoading(true);
       setError('');
-
       const response = await loansService.getLoans(params);
-
       setLoans(response.data);
       setTotal(response.meta.total);
     } catch (requestError) {
       const message =
         requestError instanceof Error
           ? requestError.message
-          : 'Unable to load loans';
-
+          : t('errors.load');
       setError(message);
     } finally {
       setLoading(false);
     }
-  }, [page, rowsPerPage, search, status, frequency, interestType]);
+  }, [page, rowsPerPage, search, status, frequency, interestType, t]);
+
+  useEffect(() => {
+    const handle = window.setTimeout(() => {
+      setSearch(searchInput.trim());
+    }, 300);
+    return () => window.clearTimeout(handle);
+  }, [searchInput]);
+
+  useEffect(() => {
+    setPage(1);
+    setSelectedKeys([]);
+  }, [search]);
 
   useEffect(() => {
     let cancelled = false;
@@ -132,44 +136,27 @@ export default function LoansPage() {
       try {
         setLoading(true);
         setError('');
-
         const response = await loansService.getLoans(params);
-
-        if (cancelled) {
-          return;
-        }
-
+        if (cancelled) return;
         setLoans(response.data);
         setTotal(response.meta.total);
       } catch (requestError) {
-        if (cancelled) {
-          return;
-        }
-
+        if (cancelled) return;
         const message =
           requestError instanceof Error
             ? requestError.message
-            : 'Unable to load loans';
-
+            : t('errors.load');
         setError(message);
       } finally {
-        if (!cancelled) {
-          setLoading(false);
-        }
+        if (!cancelled) setLoading(false);
       }
     };
 
     void load();
-
     return () => {
       cancelled = true;
     };
-  }, [page, rowsPerPage, search, status, frequency, interestType]);
-
-  const handleSearch = () => {
-    setPage(1);
-    setSearch(searchInput.trim());
-  };
+  }, [page, rowsPerPage, search, status, frequency, interestType, t]);
 
   const handleClearFilters = () => {
     setSearchInput('');
@@ -177,27 +164,43 @@ export default function LoansPage() {
     setStatus('');
     setFrequency('');
     setInterestType('');
+    setSelectedKeys([]);
     setPage(1);
+  };
+
+  const handleStatusTabChange = (tabId: string) => {
+    setStatus(tabId === 'all' ? '' : (tabId as LoanStatus));
+    setSelectedKeys([]);
+    setPage(1);
+  };
+
+  const handleFilterChange = (filterId: string, value: string | string[]) => {
+    const nextValue = Array.isArray(value) ? (value[0] ?? '') : value;
+    if (filterId === 'frequency') {
+      setFrequency(nextValue as LoanFrequency | '');
+      setSelectedKeys([]);
+      setPage(1);
+      return;
+    }
+    if (filterId === 'interestType') {
+      setInterestType(nextValue as LoanInterestType | '');
+      setSelectedKeys([]);
+      setPage(1);
+    }
   };
 
   const handleDelete = useCallback(
     async (loan: Loan) => {
       const confirmed = window.confirm(
-        `Are you sure you want to delete this loan of ${formatCurrency(
-          loan.amount,
-        )}?`,
+        t('confirmDelete', { amount: formatCurrency(loan.amount) }),
       );
-
-      if (!confirmed) {
-        return;
-      }
+      if (!confirmed) return;
 
       try {
         setDeletingLoanId(loan.id);
         setError('');
-
         await loansService.deleteLoan(loan.id);
-
+        setSelectedKeys((keys) => keys.filter((key) => key !== loan.id));
         if (loans.length === 1 && page > 1) {
           setPage((currentPage) => currentPage - 1);
         } else {
@@ -207,267 +210,229 @@ export default function LoansPage() {
         const message =
           requestError instanceof Error
             ? requestError.message
-            : 'Unable to delete loan';
-
+            : t('errors.delete');
         setError(message);
       } finally {
         setDeletingLoanId(null);
       }
     },
-    [loans.length, page, loadLoans],
+    [loans.length, page, loadLoans, t],
   );
 
-  const columns = useMemo(
+  const columns = useMemo<DataTableColumn<Loan>[]>(
     () => [
       {
         key: 'borrowerId',
-        header: 'Borrower',
-        render: (loan: Loan) => loan.borrowerId,
+        header: t('columns.borrower'),
+        render: (loan) => loan.borrowerId,
       },
       {
         key: 'loanId',
-        header: 'Loan ID',
-        render: (loan: Loan) => loan.id,
+        header: t('columns.loanId'),
+        render: (loan) => loan.id,
       },
       {
         key: 'amount',
-        header: 'Amount',
-        render: (loan: Loan) => formatCurrency(loan.amount),
+        header: t('columns.amount'),
+        align: 'right',
+        render: (loan) => formatCurrency(loan.amount),
       },
       {
         key: 'interest',
-        header: 'Interest',
-        render: (loan: Loan) =>
-          `${loan.interestRate}% (${formatInterestType(loan.interestType)})`,
+        header: t('columns.interest'),
+        render: (loan) =>
+          `${loan.interestRate}% (${t(`interestType.${loan.interestType}`)})`,
       },
       {
         key: 'installment',
-        header: 'Installment',
-        render: (loan: Loan) => formatCurrency(loan.installmentAmount),
+        header: t('columns.installment'),
+        align: 'right',
+        render: (loan) => formatCurrency(loan.installmentAmount),
       },
       {
         key: 'installments',
-        header: 'Installments',
-        render: (loan: Loan) =>
+        header: t('columns.installments'),
+        render: (loan) =>
           `${loan.paidInstallments}/${loan.numberOfInstallments}`,
       },
       {
         key: 'frequency',
-        header: 'Frequency',
-        render: (loan: Loan) => formatFrequency(loan.frequency),
+        header: t('columns.frequency'),
+        render: (loan) => t(`frequency.${loan.frequency}`),
       },
       {
         key: 'status',
-        header: 'Status',
-        render: (loan: Loan) => formatStatus(loan.status),
+        header: t('columns.status'),
+        render: (loan) => (
+          <DataTableStatusChip
+            label={t(`status.${loan.status}`)}
+            tone={STATUS_TONE[loan.status]}
+          />
+        ),
       },
       {
         key: 'dueDate',
-        header: 'Due Date',
-        render: (loan: Loan) => formatDate(loan.dueDate),
-      },
-      {
-        key: 'actions',
-        header: 'Actions',
-        render: (loan: Loan) => (
-          <Stack direction="row" spacing={1}>
-            <Button
-              size="small"
-              variant="outlined"
-              onClick={() => navigate(`/loans/${loan.id}`)}
-            >
-              View
-            </Button>
-
-            <Button
-              size="small"
-              variant="outlined"
-              onClick={() => navigate(`/loans/${loan.id}/edit`)}
-            >
-              Edit
-            </Button>
-
-            <Button
-              size="small"
-              variant="outlined"
-              color="error"
-              disabled={deletingLoanId === loan.id}
-              onClick={() => void handleDelete(loan)}
-            >
-              {deletingLoanId === loan.id ? 'Deleting...' : 'Delete'}
-            </Button>
-          </Stack>
-        ),
+        header: t('columns.dueDate'),
+        render: (loan) => formatDate(loan.dueDate),
       },
     ],
-    [deletingLoanId, navigate, handleDelete],
+    [t],
+  );
+
+  const actions = useMemo<DataTableAction<Loan>[]>(
+    () => [
+      {
+        id: 'view',
+        label: t('actions.view'),
+        icon: Eye,
+        getHref: (loan) => `/loans/${loan.id}`,
+      },
+      {
+        id: 'edit',
+        label: t('actions.edit'),
+        icon: Pencil,
+        getHref: (loan) => `/loans/${loan.id}/edit`,
+      },
+      {
+        id: 'delete',
+        label: t('actions.delete'),
+        icon: Trash2,
+        danger: true,
+        disabled: (loan) => deletingLoanId === loan.id,
+        onClick: (loan) => {
+          void handleDelete(loan);
+        },
+      },
+    ],
+    [deletingLoanId, handleDelete, t],
+  );
+
+  const filters = useMemo<DataTableFilter[]>(
+    () => [
+      {
+        id: 'frequency',
+        label: t('filters.frequency'),
+        icon: CalendarClock,
+        multiple: false,
+        options: FREQUENCY_OPTIONS.map((option) => ({
+          value: option,
+          label: t(`frequency.${option}`),
+        })),
+      },
+      {
+        id: 'interestType',
+        label: t('filters.interestType'),
+        icon: Percent,
+        multiple: false,
+        options: INTEREST_TYPE_OPTIONS.map((option) => ({
+          value: option,
+          label: t(`interestType.${option}`),
+        })),
+      },
+    ],
+    [t],
+  );
+
+  const filterValues = useMemo<DataTableFilterValues>(
+    () => ({
+      frequency,
+      interestType,
+    }),
+    [frequency, interestType],
+  );
+
+  const statusTabs = useMemo<DataTableStatusTab[]>(
+    () => [
+      { id: 'all', label: t('tabs.all'), tone: 'neutral' },
+      ...STATUS_OPTIONS.map((option) => ({
+        id: option,
+        label: t(`status.${option}`),
+        tone: STATUS_TONE[option],
+      })),
+    ],
+    [t],
   );
 
   return (
-    <Box sx={{ p: 4 }}>
+    <Box
+      sx={{
+        p: 0,
+        width: '100%',
+        maxWidth: '100%',
+        minWidth: 0,
+        alignSelf: 'stretch',
+        boxSizing: 'border-box',
+      }}
+    >
       <Stack spacing={3}>
-        <Stack
-          direction={{ xs: 'column', sm: 'row' }}
-          spacing={2}
-          sx={{
-            justifyContent: {
-              xs: 'flex-start',
-              sm: 'space-between',
-            },
-            alignItems: {
-              xs: 'flex-start',
-              sm: 'center',
-            },
-          }}
-        >
-          <Box>
-            <Typography variant="h4" sx={{ fontWeight: 600 }}>
-              Loans
-            </Typography>
-
-            <Typography variant="body2" color="text.secondary">
-              Manage your loans and repayment schedules.
-            </Typography>
-          </Box>
-
-          <Button variant="contained" onClick={() => navigate('/loans/new')}>
-            Create Loan
-          </Button>
-        </Stack>
-
-        <Stack
-          direction={{ xs: 'column', md: 'row' }}
-          spacing={2}
-          sx={{
-            alignItems: {
-              xs: 'stretch',
-              md: 'center',
-            },
-          }}
-        >
-          <TextField
-            label="Search loans"
-            placeholder="Search by borrower name, email or Loan ID"
-            value={searchInput}
-            onChange={(event) => setSearchInput(event.target.value)}
-            onKeyDown={(event) => {
-              if (event.key === 'Enter') {
-                handleSearch();
-              }
-            }}
-            size="small"
-            fullWidth
-          />
-
-          <FormControl size="small" sx={{ minWidth: 160 }}>
-            <InputLabel>Status</InputLabel>
-
-            <Select
-              value={status}
-              label="Status"
-              onChange={(event) => {
-                setStatus(event.target.value as LoanStatus | '');
-                setPage(1);
-              }}
+        <PageHeader
+          title={t('title')}
+          description={t('subtitle')}
+          actions={
+            <Button
+              variant="contained"
+              color="secondary"
+              fullWidth
+              startIcon={<Plus size={18} strokeWidth={2.25} aria-hidden />}
+              onClick={() => navigate('/loans/new')}
             >
-              <MenuItem value="">All</MenuItem>
-
-              {STATUS_OPTIONS.map((option) => (
-                <MenuItem key={option} value={option}>
-                  {formatStatus(option)}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-
-          <FormControl size="small" sx={{ minWidth: 160 }}>
-            <InputLabel>Frequency</InputLabel>
-
-            <Select
-              value={frequency}
-              label="Frequency"
-              onChange={(event) => {
-                setFrequency(event.target.value as LoanFrequency | '');
-                setPage(1);
-              }}
-            >
-              <MenuItem value="">All</MenuItem>
-
-              {FREQUENCY_OPTIONS.map((option) => (
-                <MenuItem key={option} value={option}>
-                  {formatFrequency(option)}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-
-          <FormControl size="small" sx={{ minWidth: 160 }}>
-            <InputLabel>Interest Type</InputLabel>
-
-            <Select
-              value={interestType}
-              label="Interest Type"
-              onChange={(event) => {
-                setInterestType(event.target.value as LoanInterestType | '');
-                setPage(1);
-              }}
-            >
-              <MenuItem value="">All</MenuItem>
-
-              {INTEREST_TYPE_OPTIONS.map((option) => (
-                <MenuItem key={option} value={option}>
-                  {formatInterestType(option)}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-
-          <Button variant="contained" onClick={handleSearch} disabled={loading}>
-            Search
-          </Button>
-
-          <Button
-            variant="outlined"
-            onClick={handleClearFilters}
-            disabled={
-              !searchInput && !search && !status && !frequency && !interestType
-            }
-          >
-            Clear
-          </Button>
-        </Stack>
+              {t('createLoan')}
+            </Button>
+          }
+        />
 
         {error && <Alert severity="error">{error}</Alert>}
 
-        {loading && loans.length === 0 ? (
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'center',
-              py: 8,
-            }}
-          >
-            <CircularProgress />
-          </Box>
-        ) : (
-          <TableComponent
-            columns={columns}
-            data={loans}
-            rowKey={(loan) => loan.id}
-            loading={loading}
-            emptyMessage="No loans found"
-            page={page - 1}
-            rowsPerPage={rowsPerPage}
-            total={total}
-            onPageChange={(nextPage) => {
-              setPage(nextPage + 1);
-            }}
-            onRowsPerPageChange={(nextRowsPerPage) => {
-              setRowsPerPage(nextRowsPerPage);
-              setPage(1);
-            }}
-          />
-        )}
+        <DataTable
+          columns={columns}
+          data={loans}
+          rowKey={(loan) => loan.id}
+          loading={loading}
+          emptyMessage={t('empty')}
+          searchValue={searchInput}
+          searchPlaceholder={t('searchPlaceholder')}
+          onSearchChange={setSearchInput}
+          filters={filters}
+          filterValues={filterValues}
+          onFilterChange={handleFilterChange}
+          onClearFilters={handleClearFilters}
+          filtersLabel={t('filters.label')}
+          clearFiltersLabel={t('filters.clear')}
+          statusTabs={statusTabs}
+          activeStatusTab={status || 'all'}
+          onStatusTabChange={handleStatusTabChange}
+          selectable
+          selectedKeys={selectedKeys}
+          onSelectionChange={setSelectedKeys}
+          actions={actions}
+          actionsAriaLabel={t('actions.menu')}
+          getActionsAriaLabel={(loan) =>
+            t('actions.menuFor', { id: loan.id })
+          }
+          getRowHref={(loan) => `/loans/${loan.id}`}
+          page={page - 1}
+          rowsPerPage={rowsPerPage}
+          total={total}
+          onPageChange={(nextPage) => {
+            setPage(nextPage + 1);
+          }}
+          onRowsPerPageChange={(nextRowsPerPage) => {
+            setRowsPerPage(nextRowsPerPage);
+            setPage(1);
+          }}
+          previousPageLabel={t('pagination.prev')}
+          nextPageLabel={t('pagination.next')}
+          rowsPerPageLabel={t('pagination.rows')}
+          rangeLabel={(start, end, totalCount) =>
+            t('pagination.range', { start, end, total: totalCount })
+          }
+          selectedCountLabel={(count) =>
+            t('pagination.selected', { count })
+          }
+          loadingLabel={t('loading')}
+          regionLabel={t('title')}
+          statusTabsLabel={t('filters.status')}
+        />
       </Stack>
     </Box>
   );

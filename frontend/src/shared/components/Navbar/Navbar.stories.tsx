@@ -1,14 +1,22 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
+import { SidebarBehaviorProvider } from '@/shared/themes/sidebar-behavior-context';
 import Navbar from './Navbar';
 import { DEFAULT_ITEMS, type NavItem } from './defaultNavItems';
 import type { ThemePreference } from './Navbar';
+
+const withSidebarBehavior = (Story: () => ReactNode) => (
+  <SidebarBehaviorProvider>
+    <Story />
+  </SidebarBehaviorProvider>
+);
 
 const meta: Meta<typeof Navbar> = {
   title: 'Components/Navbar',
   component: Navbar,
   tags: ['autodocs'],
+  decorators: [withSidebarBehavior],
   parameters: {
     layout: 'fullscreen',
     docs: {
@@ -24,7 +32,7 @@ const meta: Meta<typeof Navbar> = {
     activeItem: {
       control: 'select',
       options: DEFAULT_ITEMS.map((item) => item.id),
-      mapping: Object.fromEntries(DEFAULT_ITEMS.map((item) => [item.id, item.title])),
+      mapping: Object.fromEntries(DEFAULT_ITEMS.map((item) => [item.id, item.titleKey])),
       description: 'Currently selected item id.',
       table: { category: 'Navigation' },
     },
@@ -35,7 +43,7 @@ const meta: Meta<typeof Navbar> = {
     items: {
       
       control: 'object',
-      description: 'Overrides the default 3 items. Each item is an object: { id, title, url, icon }.',
+      description: 'Overrides the default nav items. Each item is an object: { id, titleKey, url, icon }.',
       table: { category: 'Navigation' },
     },
     logo: {

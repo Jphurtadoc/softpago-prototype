@@ -1,0 +1,67 @@
+/** Portuguese copy for the loan details page. */
+const loansDetailsPt = {
+  title: 'Detalhe do empréstimo',
+  subtitle: 'Consulte as informações e o cronograma de pagamento.',
+  loading: 'Carregando detalhe do empréstimo…',
+  missingId: 'ID do empréstimo ausente',
+  notFound: 'Empréstimo não encontrado',
+  back: 'Voltar',
+  backToList: 'Voltar aos empréstimos',
+  edit: 'Editar',
+  tabsLabel: 'Seções do empréstimo',
+  tabs: {
+    parties: 'Partes',
+    financial: 'Financeiro',
+    schedule: 'Cronograma',
+    record: 'Registro',
+  },
+  hero: {
+    totalLabel: 'Valor total',
+    principalInterest: 'Principal {{amount}} · Juros {{rate}}% ({{type}})',
+    installmentsPaid: 'Parcelas pagas',
+  },
+  metrics: {
+    installment: 'Parcela',
+    remaining: 'Pendente',
+    remainingHint: 'Saldo estimado',
+    dueDate: 'Vencimento',
+    started: 'Início {{date}}',
+    interest: 'Juros',
+  },
+  sections: {
+    parties: 'Partes',
+    partiesDesc: 'Pessoas e atribuição vinculadas a este empréstimo.',
+    financial: 'Informações financeiras',
+    financialDesc: 'Valores e configuração de juros.',
+    schedule: 'Cronograma de pagamento',
+    scheduleDesc: 'Frequência e progresso das parcelas.',
+    record: 'Registro',
+    recordDesc: 'Datas de auditoria deste empréstimo.',
+  },
+  fields: {
+    loanId: 'ID do empréstimo',
+    lenderId: 'ID do credor',
+    borrowerId: 'ID do mutuário',
+    routeId: 'ID da rota',
+    debtCollectorId: 'ID do cobrador',
+    amount: 'Valor',
+    interest: 'Juros',
+    totalAmount: 'Valor total',
+    installmentAmount: 'Valor da parcela',
+    frequency: 'Frequência',
+    installments: 'Parcelas',
+    startDate: 'Data de início',
+    dueDate: 'Data de vencimento',
+    created: 'Criado',
+    updated: 'Atualizado',
+    notAssigned: 'Não atribuído',
+  },
+  progress: {
+    payment: 'Progresso do pagamento',
+  },
+  errors: {
+    load: 'Não foi possível carregar o empréstimo',
+  },
+} as const
+
+export default loansDetailsPt

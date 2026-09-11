@@ -11,13 +11,13 @@ import {
   FormLabel,
   Stack,
   TextField,
-  Typography,
 } from '@mui/material';
 
 import { debtCollectorsService } from '../../debt-collectors/services/debt-collectors.service';
 import type { DebtCollector } from '../../debt-collectors/types/debt-collectors.types';
 
 import { routesService } from '../services/routes.service';
+import { PageHeader } from '../../../shared/components/layouts/PageHeader';
 import type { CreateRouteRequest } from '../types/routes.types';
 
 interface RouteFormProps {
@@ -150,15 +150,10 @@ export default function RouteForm({ onSuccess, onCancel }: RouteFormProps) {
   return (
     <Box component="form" onSubmit={handleSubmit}>
       <Stack spacing={3}>
-        <Box>
-          <Typography variant="h4" sx={{ fontWeight: 600 }}>
-            Create Route
-          </Typography>
-
-          <Typography variant="body2" color="text.secondary">
-            Create a new loan portfolio and assign debt collectors.
-          </Typography>
-        </Box>
+        <PageHeader
+          title="Create Route"
+          description="Create a new loan portfolio and assign debt collectors."
+        />
 
         {error && <Alert severity="error">{error}</Alert>}
 

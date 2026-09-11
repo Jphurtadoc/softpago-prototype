@@ -4,6 +4,7 @@ import { alpha } from '@mui/material/styles';
 import ChevronAccent, {
   type ChevronDirection,
 } from '../../../../shared/components/layouts/ChevronAccent';
+import { AUTH_BRAND_TOKENS } from '../../themes/auth-brand-tokens';
 import AuthBrandMark, {
   type AuthBrandMarkVariant,
 } from '../AuthBrandMark/AuthBrandMark';
@@ -24,14 +25,23 @@ export interface AuthLayoutProps {
   showThemeToggle?: boolean;
 }
 
-const meshPositionByAccent: Record<
-  ChevronDirection,
-  { warm: string; cool: string }
-> = {
-  left: { warm: '14% 16%', cool: '88% 84%' },
-  right: { warm: '86% 16%', cool: '12% 84%' },
-  up: { warm: '16% 12%', cool: '84% 88%' },
-};
+/** Dashboard `.app` ambient mesh — same layers as App.css (secondary lime). */
+const DASHBOARD_MESH_DOT_LIGHT =
+  'radial-gradient(circle, rgba(20, 22, 26, 0.05) 1px, transparent 1px)'
+const DASHBOARD_MESH_DOT_DARK =
+  'radial-gradient(circle, rgba(241, 239, 233, 0.04) 1px, transparent 1px)'
+
+const dashboardLightBackgroundImage = [
+  'radial-gradient(ellipse 620px 480px at 14% 16%, rgba(202, 255, 5, 0.14), transparent 60%)',
+  'radial-gradient(ellipse 620px 520px at 88% 84%, rgba(202, 255, 5, 0.11), transparent 60%)',
+  DASHBOARD_MESH_DOT_LIGHT,
+].join(', ')
+
+const dashboardDarkBackgroundImage = [
+  'radial-gradient(ellipse 620px 480px at 14% 16%, rgba(202, 255, 5, 0.08), transparent 60%)',
+  'radial-gradient(ellipse 620px 520px at 88% 84%, rgba(202, 255, 5, 0.06), transparent 60%)',
+  DASHBOARD_MESH_DOT_DARK,
+].join(', ')
 
 function AuthLayout({
   title,
@@ -45,11 +55,16 @@ function AuthLayout({
 }: AuthLayoutProps) {
   const theme = useTheme();
   const isDark = theme.palette.mode === 'dark';
-  const mesh = meshPositionByAccent[accentDirection];
   const brandNode = logo ?? <AuthBrandMark variant={brandMark} />;
   const isWordmark = brandMark === 'logo';
   const primary = theme.palette.primary.main;
   const secondary = theme.palette.secondary.main;
+  const {
+    backgroundDark,
+    backgroundLight,
+    surfaceGradientDark,
+    surfaceGradientLight,
+  } = AUTH_BRAND_TOKENS;
 
   return (
     <Box
@@ -57,23 +72,14 @@ function AuthLayout({
         position: 'relative',
         height: '100vh',
         overflow: 'hidden',
-        backgroundColor: 'background.default',
+        backgroundColor: isDark ? backgroundDark : backgroundLight,
+        backgroundImage: isDark
+          ? dashboardDarkBackgroundImage
+          : dashboardLightBackgroundImage,
+        backgroundSize: 'auto, auto, 22px 22px',
+        backgroundRepeat: 'no-repeat, no-repeat, repeat',
       }}
     >
-      <Box
-        aria-hidden
-        sx={{
-          position: 'absolute',
-          inset: '-12%',
-          zIndex: 0,
-          backgroundImage: [
-            `radial-gradient(ellipse 520px 400px at ${mesh.warm}, ${alpha(secondary, isDark ? 0.1 : 0.12)}, transparent 62%)`,
-            `radial-gradient(ellipse 520px 420px at ${mesh.cool}, ${alpha(primary, isDark ? 0.35 : 0.06)}, transparent 62%)`,
-          ].join(', '),
-          backgroundRepeat: 'no-repeat',
-        }}
-      />
-
       <Box
         sx={{
           position: 'absolute',
@@ -110,7 +116,7 @@ function AuthLayout({
             py: { xs: 3.5, sm: 4.5 },
             px: { xs: 2.5, sm: 3.5 },
             borderRadius: 3,
-            backgroundColor: 'background.paper',
+            background: isDark ? surfaceGradientDark : surfaceGradientLight,
             border: '1px solid',
             borderColor: isDark ? alpha(secondary, 0.14) : alpha(primary, 0.08),
             boxShadow: isDark

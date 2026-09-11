@@ -1,5 +1,6 @@
 /** Spanish copy for the Overview (home) dashboard. */
 const homeOverviewEs = {
+  title: 'Inicio',
   welcome: 'Hola, {{name}}',
   subtitle: 'Resumen general de tu operación.',
   loadError: 'No se pudo cargar el panel.',
@@ -12,13 +13,30 @@ const homeOverviewEs = {
   },
   balance: {
     title: 'Balance',
-    badge: '+{{percent}}% este mes',
+    myBalance: 'Mi saldo',
     dayStart: 'Inicio del día',
-    paymentsToday: 'Pagos hoy',
+    incoming: 'Recibido',
+    loan: 'Préstamos',
+    profit: 'Ganancia',
+    newLoans: 'Nuevos',
+    repeatClients: 'Clientes',
+    collection: 'Recaudo',
+    toCollect: 'Total a recaudar',
+    collected: 'Recaudado',
+    progressLabel: 'Progreso de recaudo {{percent}}%',
     showMetric: 'Mostrar {{label}}',
     hideMetric: 'Ocultar {{label}}',
     openPayments: 'Ir a pagos',
     currency: 'COP',
+  },
+  kpis: {
+    routes: 'Rutas',
+    clients: 'Clientes',
+    loanMoney: 'En préstamos',
+  },
+  chart: {
+    title: 'Balance reciente',
+    subtitle: 'Últimos 6 meses',
   },
   quickActions: {
     title: 'Acciones rápidas',

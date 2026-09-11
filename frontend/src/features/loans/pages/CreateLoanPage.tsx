@@ -10,7 +10,6 @@ import {
   Select,
   Stack,
   TextField,
-  Typography,
 } from '@mui/material';
 
 import { loansService } from '../services/loans.service';
@@ -20,6 +19,7 @@ import type {
   LoanInterestType,
   LoanStatus,
 } from '../types/loans.types';
+import { PageHeader } from '../../../shared/components/layouts/PageHeader';
 
 const FREQUENCY_OPTIONS: LoanFrequency[] = [
   'DAILY',
@@ -153,15 +153,10 @@ export default function CreateLoanPage() {
   return (
     <Box component="form" onSubmit={handleSubmit} sx={{ p: 4 }}>
       <Stack spacing={3}>
-        <Box>
-          <Typography variant="h4" sx={{ fontWeight: 600 }}>
-            Create Loan
-          </Typography>
-
-          <Typography variant="body2" color="text.secondary">
-            Create a new loan and define its repayment schedule.
-          </Typography>
-        </Box>
+        <PageHeader
+          title="Create Loan"
+          description="Create a new loan and define its repayment schedule."
+        />
 
         {error && <Alert severity="error">{error}</Alert>}
 

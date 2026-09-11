@@ -24,17 +24,23 @@ const LOCALE_INITIAL: Record<AppLocale, string> = {
   pt: 'PT',
 }
 
+export interface LocaleToggleProps {
+  /** Menu opens above (auth floating) or below (settings). */
+  readonly menuPlacement?: 'top' | 'bottom'
+}
+
 /**
  * Compact locale select: current flag + initial + chevron opens the menu.
  * Visual style follows shadcn Select trigger/menu patterns.
  * @see https://ui.shadcn.com/docs/components/radix/select
  */
-function LocaleToggle() {
+function LocaleToggle({ menuPlacement = 'top' }: LocaleToggleProps) {
   const { t, i18n } = useTranslation('common/locale')
   const theme = useTheme()
   const menuId = useId()
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
   const isMenuOpen = Boolean(anchorEl)
+  const opensUpward = menuPlacement === 'top'
   const currentLocale = resolveAppLocale(
     i18n.resolvedLanguage ?? i18n.language,
   )
@@ -130,8 +136,14 @@ function LocaleToggle() {
         anchorEl={anchorEl}
         open={isMenuOpen}
         onClose={handleClose}
-        anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
-        transformOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+        anchorOrigin={{
+          vertical: opensUpward ? 'top' : 'bottom',
+          horizontal: 'left',
+        }}
+        transformOrigin={{
+          vertical: opensUpward ? 'bottom' : 'top',
+          horizontal: 'left',
+        }}
         slotProps={{
           list: {
             'aria-label': t('groupLabel'),
@@ -142,7 +154,7 @@ function LocaleToggle() {
           paper: {
             elevation: 0,
             sx: {
-              mt: -0.75,
+              mt: opensUpward ? -0.75 : 0.75,
               minWidth: 168,
               borderRadius: 1.5,
               border: '1px solid',

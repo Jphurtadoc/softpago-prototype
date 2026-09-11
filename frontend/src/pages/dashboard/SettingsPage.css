@@ -1,0 +1,590 @@
+.settings-page {
+  --settings-brand-primary: #063832;
+  --settings-brand-secondary: #caff05;
+  --settings-accent-glow: rgba(202, 255, 5, 0.18);
+  --settings-accent-soft: rgba(202, 255, 5, 0.1);
+  --settings-icon-inactive: #767c8c;
+  --settings-item-hover-bg: linear-gradient(
+    90deg,
+    rgba(202, 255, 5, 0.22) 0%,
+    rgba(202, 255, 5, 0.06) 55%,
+    transparent 100%
+  );
+  --settings-item-hover-glow: rgba(202, 255, 5, 0.28);
+  --settings-item-hover-color: var(--settings-brand-secondary);
+  --settings-shell-bg: color-mix(in srgb, #1a1b22 92%, transparent);
+  --settings-shell-border: rgba(255, 255, 255, 0.08);
+  --settings-nav-border: rgba(255, 255, 255, 0.06);
+  --settings-card-bg: rgba(255, 255, 255, 0.03);
+  --settings-card-border: rgba(255, 255, 255, 0.08);
+  --settings-text: #f1efe9;
+  --settings-text-muted: #9ca3af;
+  --settings-avatar-bg: #22242c;
+  --settings-avatar-color: #caff05;
+
+  width: 100%;
+  max-width: none;
+  min-width: 0;
+  color: var(--settings-text);
+}
+
+.settings-page[data-theme='light'] {
+  --settings-icon-inactive: #6b7280;
+  --settings-item-hover-bg: linear-gradient(
+    90deg,
+    rgba(6, 56, 50, 0.18) 0%,
+    rgba(6, 56, 50, 0.06) 55%,
+    transparent 100%
+  );
+  --settings-item-hover-glow: rgba(6, 56, 50, 0.22);
+  --settings-item-hover-color: var(--settings-brand-primary);
+  --settings-accent-glow: rgba(202, 255, 5, 0.16);
+  --settings-accent-soft: rgba(202, 255, 5, 0.14);
+  --settings-shell-bg: rgba(255, 255, 255, 0.72);
+  --settings-shell-border: rgba(20, 22, 26, 0.1);
+  --settings-nav-border: rgba(20, 22, 26, 0.1);
+  --settings-card-bg: #ffffff;
+  --settings-card-border: rgba(20, 22, 26, 0.1);
+  --settings-text: #1a1c20;
+  --settings-text-muted: #6b7280;
+  --settings-avatar-bg: #efece6;
+  --settings-avatar-color: #063832;
+}
+
+.settings-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  width: 100%;
+  margin-top: 1.5rem;
+  min-width: 0;
+  border: 1px solid var(--settings-shell-border);
+  border-radius: 16px;
+  background: var(--settings-shell-bg);
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(20, 22, 26, 0.04);
+}
+
+.settings-nav {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  flex-shrink: 0;
+  padding: 12px;
+  border-bottom: 1px solid var(--settings-nav-border);
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.settings-nav__indicator {
+  display: none;
+}
+
+.settings-nav__item {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  height: 46px;
+  padding: 0 14px;
+  border: none;
+  border-radius: 14px;
+  background: transparent;
+  color: var(--settings-icon-inactive);
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    color 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.settings-nav__item-content {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  min-width: 0;
+}
+
+.settings-nav__item:hover {
+  color: var(--settings-item-hover-color);
+  background: var(--settings-item-hover-bg);
+  box-shadow: 0 0 14px var(--settings-item-hover-glow);
+}
+
+.settings-nav__item--active {
+  color: var(--settings-brand-primary);
+  font-weight: 600;
+  background: var(--settings-brand-secondary);
+}
+
+.settings-page[data-theme='dark'] .settings-nav__item--active {
+  color: var(--settings-brand-primary);
+}
+
+.settings-nav__item--active:hover {
+  color: var(--settings-brand-primary);
+  background: var(--settings-brand-secondary);
+  box-shadow: none;
+}
+
+.settings-nav__item:focus-visible {
+  outline: 2px solid var(--settings-brand-secondary);
+  outline-offset: 3px;
+  border-radius: 14px;
+  box-shadow: 0 0 0 4px var(--settings-accent-soft);
+}
+
+.settings-nav__item-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  font-size: 19px;
+}
+
+.settings-nav__item-icon svg {
+  display: block;
+  width: 19px;
+  height: 19px;
+}
+
+.settings-nav__item-label {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.settings-main {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+  padding: 1.25rem;
+}
+
+.settings-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+  width: 100%;
+}
+
+.settings-section__header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 0.15rem;
+}
+
+.settings-section__header--with-action {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.85rem;
+}
+
+.settings-section__header-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.settings-section__action {
+  align-self: flex-start;
+  min-height: 40px;
+}
+
+.settings-section__title {
+  font-size: 1.25rem !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.02em;
+  color: var(--settings-text);
+  line-height: 1.25;
+}
+
+.settings-section__description {
+  font-size: 0.875rem;
+  line-height: 1.45;
+  color: var(--settings-text-muted) !important;
+  max-width: 42rem;
+}
+
+.settings-subsection__header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  margin-bottom: 1.25rem;
+}
+
+.settings-subsection__title {
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  color: var(--settings-text);
+  line-height: 1.3;
+}
+
+.settings-subsection__description {
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  color: var(--settings-text-muted) !important;
+}
+
+.settings-accordion {
+  width: 100%;
+  background: transparent !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
+.settings-accordion::before {
+  display: none;
+}
+
+.settings-card--accordion {
+  padding: 1.25rem;
+  overflow: hidden;
+}
+
+.settings-accordion__summary {
+  min-height: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  cursor: pointer;
+}
+
+.settings-accordion__summary:hover,
+.settings-accordion__summary.Mui-expanded {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+.settings-accordion__summary .MuiAccordionSummary-content,
+.settings-accordion__summary .MuiAccordionSummary-content.Mui-expanded {
+  margin: 0 !important;
+  width: 100%;
+}
+
+.settings-accordion__summary .MuiAccordionSummary-expandIconWrapper {
+  display: none;
+}
+
+.settings-accordion__chevron {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  font-size: 1.25rem;
+  color: var(--settings-text-muted);
+  transition: transform 200ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.settings-accordion__chevron--open {
+  transform: rotate(180deg);
+}
+
+.settings-accordion__details {
+  padding: 1.25rem 0 0 !important;
+  border-top: none;
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+.settings-row--accordion {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+}
+
+.settings-row--accordion .settings-row__lead {
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+}
+
+.settings-row--accordion .settings-row__control {
+  margin-left: auto;
+  padding-left: 0;
+  flex-shrink: 0;
+}
+
+.settings-card {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 1.25rem;
+  border: 1px solid var(--settings-card-border);
+  border-radius: 12px;
+  background: var(--settings-card-bg);
+}
+
+.settings-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  font-size: 20px;
+  color: var(--settings-brand-primary);
+  background: color-mix(in srgb, var(--settings-brand-secondary) 28%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--settings-brand-secondary) 35%, transparent);
+}
+
+.settings-page[data-theme='dark'] .settings-icon {
+  color: var(--settings-brand-secondary);
+  background: color-mix(in srgb, var(--settings-brand-secondary) 14%, transparent);
+}
+
+.settings-row {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0;
+}
+
+.settings-row__lead {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+  min-width: 0;
+  flex: 1;
+}
+
+.settings-row__copy {
+  min-width: 0;
+  flex: 1;
+}
+
+.settings-row__title {
+  font-size: 0.9375rem !important;
+  font-weight: 600 !important;
+  color: var(--settings-text);
+  line-height: 1.3;
+}
+
+.settings-row__copy .MuiTypography-body2 {
+  margin-top: 0.15rem;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  color: var(--settings-text-muted) !important;
+}
+
+.settings-row__control {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  padding-left: calc(40px + 0.85rem);
+}
+
+.settings-account__profile {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.settings-account__avatar {
+  position: relative;
+  flex-shrink: 0;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--settings-brand-secondary) 35%, transparent);
+}
+
+.settings-account__avatar-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: var(--settings-avatar-bg);
+  color: var(--settings-avatar-color);
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.settings-account__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+  flex: 1;
+}
+
+.settings-account__name {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--settings-text);
+}
+
+.settings-account__email,
+.settings-account__role {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--settings-text-muted);
+}
+
+.settings-account__edit {
+  align-self: stretch;
+}
+
+.settings-users__identity {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.settings-users__avatar {
+  position: relative;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--settings-brand-secondary) 35%, transparent);
+}
+
+.settings-users__avatar-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: var(--settings-avatar-bg);
+  color: var(--settings-avatar-color);
+  font-size: 0.8125rem;
+  font-weight: 700;
+}
+
+.settings-users__name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+.settings-field__visibility {
+  color: inherit;
+  width: 32px;
+  height: 32px;
+  padding: 4px;
+  font-size: 1.05rem;
+}
+
+.settings-field__visibility .MuiSvgIcon-root {
+  font-size: 1.05rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .settings-nav__item,
+  .settings-nav__indicator,
+  .settings-accordion__chevron {
+    transition: none;
+  }
+}
+
+@media (min-width: 900px) {
+  .settings-shell {
+    flex-direction: row;
+    align-items: stretch;
+  }
+
+  .settings-nav {
+    flex-direction: column;
+    width: 220px;
+    padding: 14px;
+    border-right: 1px solid var(--settings-nav-border);
+    border-bottom: none;
+    overflow: visible;
+  }
+
+  .settings-nav__indicator {
+    display: block;
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    right: 14px;
+    height: 46px;
+    border-radius: 14px;
+    background: var(--settings-brand-secondary);
+    box-shadow: 0 0 12px var(--settings-accent-glow);
+    transition: transform 0.32s cubic-bezier(0.65, 0, 0.35, 1);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .settings-nav__item--active {
+    background: transparent;
+  }
+
+  .settings-nav__item--active:hover {
+    background: transparent;
+  }
+
+  .settings-nav__item {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .settings-main {
+    padding: 1.5rem 1.75rem;
+  }
+
+  .settings-row {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+  }
+
+  .settings-row__control {
+    padding-left: 0;
+  }
+
+  .settings-row__lead {
+    align-items: center;
+  }
+
+  .settings-section__header--with-action {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .settings-section__action {
+    align-self: center;
+    flex-shrink: 0;
+  }
+
+  .settings-account__profile {
+    flex-direction: row;
+    align-items: center;
+    gap: 1.25rem;
+  }
+
+  .settings-account__edit {
+    align-self: center;
+    margin-left: auto;
+  }
+}

@@ -1,6 +1,7 @@
 import type { DebtCollector } from '@/features/debt-collectors/types/debt-collectors.types'
 import type { Loan } from '@/features/loans/types/loans.types'
 import type { Route } from '@/features/routes/types/routes.types'
+import type { SystemUser } from '@/features/users/types/users.types'
 
 /** Prototype demo credentials for Vercel (no backend). */
 export const PROTOTYPE_CREDENTIALS = {
@@ -39,6 +40,63 @@ const seedDebtCollectors: DebtCollector[] = [
     email: 'ana.ruiz@example.com',
     phone: '+57 301 444 5566',
     routeIds: ['route-002'],
+    createdAt: NOW,
+    updatedAt: NOW,
+  },
+]
+
+const seedUsers: SystemUser[] = [
+  {
+    id: PROTOTYPE_USER.sub,
+    name: PROTOTYPE_USER.name,
+    email: PROTOTYPE_USER.email,
+    role: 'ADMIN',
+    status: 'ACTIVE',
+    createdAt: NOW,
+    updatedAt: NOW,
+  },
+  {
+    id: 'user-002',
+    name: 'María Gómez',
+    email: 'maria.gomez@answertic.co',
+    role: 'MANAGER',
+    status: 'ACTIVE',
+    createdAt: NOW,
+    updatedAt: NOW,
+  },
+  {
+    id: 'user-003',
+    name: 'Carlos Méndez',
+    email: 'carlos.mendez@example.com',
+    role: 'COLLECTOR',
+    status: 'ACTIVE',
+    createdAt: NOW,
+    updatedAt: NOW,
+  },
+  {
+    id: 'user-004',
+    name: 'Ana Ruiz',
+    email: 'ana.ruiz@example.com',
+    role: 'COLLECTOR',
+    status: 'ACTIVE',
+    createdAt: NOW,
+    updatedAt: NOW,
+  },
+  {
+    id: 'user-005',
+    name: 'Luis Pérez',
+    email: 'luis.perez@answertic.co',
+    role: 'VIEWER',
+    status: 'ACTIVE',
+    createdAt: NOW,
+    updatedAt: NOW,
+  },
+  {
+    id: 'user-006',
+    name: 'Sofía Castro',
+    email: 'sofia.castro@answertic.co',
+    role: 'VIEWER',
+    status: 'INACTIVE',
     createdAt: NOW,
     updatedAt: NOW,
   },
@@ -160,12 +218,14 @@ interface PrototypeStore {
   debtCollectors: DebtCollector[]
   loans: Loan[]
   routes: Route[]
+  users: SystemUser[]
 }
 
 const store: PrototypeStore = {
   debtCollectors: structuredClone(seedDebtCollectors),
   loans: structuredClone(seedLoans),
   routes: structuredClone(seedRoutes),
+  users: structuredClone(seedUsers),
 }
 
 /**

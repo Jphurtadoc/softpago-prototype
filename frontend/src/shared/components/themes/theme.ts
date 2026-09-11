@@ -5,12 +5,13 @@ export const theme = createTheme({
   palette: {
     mode: 'light',
     primary: {
-      main: '#e3a052',
-      contrastText: '#14161a',
+      main: '#063832',
+      contrastText: '#f7f5f1',
     },
     secondary: {
-      main: '#3fae7a',
-      contrastText: '#ffffff',
+      main: '#caff05',
+      dark: '#b8e800',
+      contrastText: '#063832',
     },
     background: {
       default: '#faf8f5',
@@ -37,11 +38,28 @@ export const theme = createTheme({
   },
   components: {
     MuiButton: {
+      defaultProps: {
+        disableElevation: true,
+      },
       styleOverrides: {
         root: {
           textTransform: 'none',
           fontWeight: 600,
           borderRadius: 10,
+          transition: 'background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease',
+          '@media (prefers-reduced-motion: reduce)': {
+            transition: 'none',
+          },
+        },
+        containedSecondary: {
+          '&:hover': {
+            transform: 'translateY(-1px)',
+          },
+          '@media (prefers-reduced-motion: reduce)': {
+            '&:hover': {
+              transform: 'none',
+            },
+          },
         },
       },
     },

@@ -1,293 +1,421 @@
-import { useCallback, useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { useNavigate, useParams } from 'react-router-dom'
 import {
-  Alert,
-  Box,
-  Button,
-  Card,
-  CardContent,
-  Chip,
-  CircularProgress,
-  Divider,
-  Stack,
-  Typography,
-} from '@mui/material';
+  ArrowLeft,
+  Clock3,
+  Hash,
+  MapPinned,
+  Pencil,
+  Plus,
+  Route as RouteIcon,
+  UserRound,
+  Users,
+  Wallet,
+} from 'lucide-react'
+import { Alert, Box, Button, CircularProgress } from '@mui/material'
 
-import AddRouteLoanForm from '../components/loans/AddRouteLoanForm';
-import RouteLoansTable from '../components/loans/RouteLoansTable';
+import {
+  DataTable,
+  DataTableStatusChip,
+  type DataTableColumn,
+  type DataTableTone,
+} from '@/shared/components/DataTable'
+import {
+  DetailField,
+  DetailMetric,
+  DetailSection,
+  DetailSurface,
+  DetailTabPanel,
+  DetailTabs,
+  type DetailTabItem,
+} from '@/shared/components/DetailSurface'
+import { PageHeader } from '@/shared/components/layouts/PageHeader'
 
-import { debtCollectorsService } from '../../debt-collectors/services/debt-collectors.service';
-import type { DebtCollector } from '../../debt-collectors/types/debt-collectors.types';
+import AddRouteLoanForm from '../components/loans/AddRouteLoanForm'
+import RouteLoansTable from '../components/loans/RouteLoansTable'
 
-import { routesService } from '../services/routes.service';
-import type { Route } from '../types/routes.types';
+import { debtCollectorsService } from '../../debt-collectors/services/debt-collectors.service'
+import type { DebtCollector } from '../../debt-collectors/types/debt-collectors.types'
 
+import { routesService } from '../services/routes.service'
+import type { Route } from '../types/routes.types'
+
+type RouteDetailTab = 'info' | 'collectors' | 'loans'
+
+const formatDateTime = (value: string) =>
+  new Date(value).toLocaleString('es-CO')
+
+/**
+ * Route detail page aligned with dashboard surface tokens and Lucide icons.
+ */
 export default function RouteDetailsPage() {
-  const navigate = useNavigate();
-  const { id } = useParams<{ id: string }>();
+  const { t } = useTranslation('routes/details')
+  const navigate = useNavigate()
+  const { id } = useParams<{ id: string }>()
 
-  const [route, setRoute] = useState<Route | null>(null);
-  const [debtCollectors, setDebtCollectors] = useState<DebtCollector[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [showAddLoan, setShowAddLoan] = useState(false);
-  const [error, setError] = useState('');
+  const [route, setRoute] = useState<Route | null>(null)
+  const [debtCollectors, setDebtCollectors] = useState<DebtCollector[]>([])
+  const [loading, setLoading] = useState(true)
+  const [showAddLoan, setShowAddLoan] = useState(false)
+  const [error, setError] = useState('')
+  const [activeTab, setActiveTab] = useState<RouteDetailTab>('info')
+  const [collectorsPage, setCollectorsPage] = useState(0)
+  const [collectorsRowsPerPage, setCollectorsRowsPerPage] = useState(10)
 
   const loadRouteData = useCallback(async () => {
     if (!id) {
-      return;
+      return
     }
 
     try {
-      setLoading(true);
-      setError('');
+      setLoading(true)
+      setError('')
 
       const [routeResponse, debtCollectorsResponse] = await Promise.all([
         routesService.getRouteById(id),
         debtCollectorsService.getAllDebtCollectors(),
-      ]);
+      ])
 
-      setRoute(routeResponse);
-      setDebtCollectors(debtCollectorsResponse);
+      setRoute(routeResponse)
+      setDebtCollectors(debtCollectorsResponse)
     } catch (requestError) {
       const message =
         requestError instanceof Error
           ? requestError.message
-          : 'Unable to load route';
-
-      setError(message);
+          : t('errors.load')
+      setError(message)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  }, [id]);
+  }, [id, t])
 
   useEffect(() => {
     if (!id) {
-      return;
+      return
     }
 
-    const loadData = async () => {
-      await loadRouteData();
-    };
+    void loadRouteData()
+  }, [id, loadRouteData])
 
-    void loadData();
-  }, [id, loadRouteData]);
+  const assignedDebtCollectors = useMemo(
+    () =>
+      debtCollectors.filter((collector) =>
+        route?.debtCollectors.includes(collector.id),
+      ),
+    [debtCollectors, route?.debtCollectors],
+  )
 
-  const assignedDebtCollectors = debtCollectors.filter((collector) =>
-    route?.debtCollectors.includes(collector.id),
-  );
+  const pagedCollectors = useMemo(
+    () =>
+      assignedDebtCollectors.slice(
+        collectorsPage * collectorsRowsPerPage,
+        collectorsPage * collectorsRowsPerPage + collectorsRowsPerPage,
+      ),
+    [assignedDebtCollectors, collectorsPage, collectorsRowsPerPage],
+  )
+
+  const collectorColumns = useMemo<DataTableColumn<DebtCollector>[]>(
+    () => [
+      {
+        key: 'name',
+        header: t('collectors.columns.name'),
+        render: (collector) => collector.name,
+      },
+      {
+        key: 'email',
+        header: t('collectors.columns.email'),
+        render: (collector) => collector.email,
+      },
+      {
+        key: 'phone',
+        header: t('collectors.columns.phone'),
+        render: (collector) => collector.phone || '—',
+      },
+      {
+        key: 'status',
+        header: t('collectors.columns.status'),
+        render: () => (
+          <DataTableStatusChip
+            label={t('collectors.assigned')}
+            tone="brand"
+          />
+        ),
+      },
+    ],
+    [t],
+  )
+
+  const tabs = useMemo<DetailTabItem[]>(
+    () => [
+      {
+        id: 'info',
+        label: t('tabs.info'),
+        icon: <RouteIcon size={15} strokeWidth={2.25} />,
+      },
+      {
+        id: 'collectors',
+        label: t('tabs.collectors'),
+        icon: <Users size={15} strokeWidth={2.25} />,
+        count: assignedDebtCollectors.length,
+      },
+      {
+        id: 'loans',
+        label: t('tabs.loans'),
+        icon: <Wallet size={15} strokeWidth={2.25} />,
+        count: route?.loanCount ?? 0,
+      },
+    ],
+    [assignedDebtCollectors.length, route?.loanCount, t],
+  )
+
+  const isActive = (route?.loanCount ?? 0) > 0
+  const activityTone: DataTableTone = isActive ? 'brand' : 'neutral'
+  const activityLabel = isActive
+    ? t('activity.ACTIVE')
+    : t('activity.EMPTY')
 
   if (!id) {
     return (
-      <Box sx={{ p: 4 }}>
-        <Stack spacing={3}>
-          <Alert severity="error">Route ID is missing</Alert>
-
-          <Button variant="outlined" onClick={() => navigate('/routes')}>
-            Back to Routes
+      <DetailSurface ariaLabel={t('titleFallback')}>
+        <div className="detail-surface__state">
+          <Alert severity="error">{t('missingId')}</Alert>
+          <Button
+            variant="outlined"
+            color="primary"
+            startIcon={<ArrowLeft size={18} strokeWidth={2.25} aria-hidden />}
+            onClick={() => navigate('/routes')}
+          >
+            {t('backToList')}
           </Button>
-        </Stack>
-      </Box>
-    );
+        </div>
+      </DetailSurface>
+    )
   }
 
   if (loading) {
     return (
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'center',
-          py: 8,
-        }}
-      >
-        <CircularProgress />
-      </Box>
-    );
+      <DetailSurface ariaLabel={t('titleFallback')}>
+        <div className="detail-surface__loading" role="status" aria-live="polite">
+          <CircularProgress size={36} />
+          <span className="sr-only">{t('loading')}</span>
+        </div>
+      </DetailSurface>
+    )
   }
 
   if (!route) {
     return (
-      <Box sx={{ p: 4 }}>
-        <Stack spacing={3}>
-          <Alert severity="error">{error || 'Route not found'}</Alert>
-
-          <Button variant="outlined" onClick={() => navigate('/routes')}>
-            Back to Routes
+      <DetailSurface ariaLabel={t('titleFallback')}>
+        <div className="detail-surface__state">
+          <Alert severity="error">{error || t('notFound')}</Alert>
+          <Button
+            variant="outlined"
+            color="primary"
+            startIcon={<ArrowLeft size={18} strokeWidth={2.25} aria-hidden />}
+            onClick={() => navigate('/routes')}
+          >
+            {t('backToList')}
           </Button>
-        </Stack>
-      </Box>
-    );
+        </div>
+      </DetailSurface>
+    )
   }
 
   return (
-    <Box sx={{ p: 4 }}>
-      <Stack spacing={3}>
-        {error && <Alert severity="error">{error}</Alert>}
+    <Box
+      sx={{
+        p: 0,
+        width: '100%',
+        maxWidth: '100%',
+        minWidth: 0,
+        alignSelf: 'stretch',
+        boxSizing: 'border-box',
+      }}
+    >
+      <DetailSurface ariaLabel={route.name}>
+        {error ? <Alert severity="error">{error}</Alert> : null}
 
-        <Stack
-          direction={{ xs: 'column', sm: 'row' }}
-          spacing={2}
-          sx={{
-            justifyContent: {
-              xs: 'flex-start',
-              sm: 'space-between',
-            },
-            alignItems: {
-              xs: 'flex-start',
-              sm: 'center',
-            },
-          }}
-        >
-          <Box>
-            <Typography variant="h4" sx={{ fontWeight: 600 }}>
-              {route.name}
-            </Typography>
-
-            <Typography variant="body2" color="text.secondary">
-              {route.description || 'No description'}
-            </Typography>
-          </Box>
-
-          <Stack direction="row" spacing={1}>
-            <Button
-              variant="outlined"
-              onClick={() => navigate(`/routes/${route.id}/edit`)}
-            >
-              Edit
-            </Button>
-
-            <Button variant="outlined" onClick={() => navigate('/routes')}>
-              Back
-            </Button>
-          </Stack>
-        </Stack>
-
-        <Card>
-          <CardContent>
-            <Stack spacing={2}>
-              <Typography variant="h6">Route Information</Typography>
-
-              <Divider />
-
-              <Typography variant="body2">
-                <strong>Route ID:</strong> {route.id}
-              </Typography>
-
-              <Typography variant="body2">
-                <strong>Lender ID:</strong> {route.lenderId}
-              </Typography>
-
-              <Typography variant="body2">
-                <strong>Loans:</strong> {route.loanCount}
-              </Typography>
-
-              <Typography variant="body2">
-                <strong>Created:</strong>{' '}
-                {new Date(route.createdAt).toLocaleString()}
-              </Typography>
-
-              <Typography variant="body2">
-                <strong>Updated:</strong>{' '}
-                {new Date(route.updatedAt).toLocaleString()}
-              </Typography>
-            </Stack>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent>
-            <Stack spacing={2}>
-              <Typography variant="h6">Debt Collectors</Typography>
-
-              <Divider />
-
-              {assignedDebtCollectors.length === 0 ? (
-                <Alert severity="info">
-                  No debt collectors assigned to this route.
-                </Alert>
-              ) : (
-                <Stack spacing={1}>
-                  {assignedDebtCollectors.map((collector) => (
-                    <Stack
-                      key={collector.id}
-                      direction={{ xs: 'column', sm: 'row' }}
-                      spacing={1}
-                      sx={{
-                        alignItems: {
-                          xs: 'flex-start',
-                          sm: 'center',
-                        },
-                      }}
-                    >
-                      <Chip label={collector.name} />
-
-                      <Typography variant="body2" color="text.secondary">
-                        {collector.email}
-                      </Typography>
-                    </Stack>
-                  ))}
-                </Stack>
-              )}
-            </Stack>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent>
-            <Stack spacing={2}>
-              <Stack
-                direction={{ xs: 'column', sm: 'row' }}
-                spacing={2}
-                sx={{
-                  justifyContent: {
-                    xs: 'flex-start',
-                    sm: 'space-between',
-                  },
-                  alignItems: {
-                    xs: 'flex-start',
-                    sm: 'center',
-                  },
-                }}
+        <PageHeader
+          title={route.name}
+          description={route.description || t('noDescription')}
+          actions={
+            <>
+              <Button
+                variant="outlined"
+                color="primary"
+                startIcon={<ArrowLeft size={18} strokeWidth={2.25} aria-hidden />}
+                onClick={() => navigate('/routes')}
               >
-                <Box>
-                  <Typography variant="h6">Loans</Typography>
+                {t('back')}
+              </Button>
+              <Button
+                variant="contained"
+                color="secondary"
+                startIcon={<Pencil size={18} strokeWidth={2.25} aria-hidden />}
+                onClick={() => navigate(`/routes/${route.id}/edit`)}
+              >
+                {t('edit')}
+              </Button>
+            </>
+          }
+        />
 
-                  <Typography variant="body2" color="text.secondary">
-                    Loans assigned to this route.
-                  </Typography>
-                </Box>
+        <div className="detail-surface__hero detail-surface__hero--accent">
+          <div className="detail-surface__hero-top">
+            <p className="detail-surface__hero-label">{t('hero.overviewLabel')}</p>
+            <DataTableStatusChip label={activityLabel} tone={activityTone} />
+          </div>
+          <div>
+            <p className="detail-surface__hero-amount" aria-hidden>
+              {route.name}
+            </p>
+            <p className="detail-surface__hero-sub">
+              {route.description || t('noDescriptionLong')}
+            </p>
+          </div>
+        </div>
 
+        <div className="detail-surface__metrics detail-surface__metrics--3">
+          <DetailMetric
+            icon={<Wallet size={16} strokeWidth={2.25} />}
+            label={t('metrics.loans')}
+            value={route.loanCount}
+            hint={t('metrics.loansHint')}
+          />
+          <DetailMetric
+            icon={<Users size={16} strokeWidth={2.25} />}
+            label={t('metrics.collectors')}
+            value={assignedDebtCollectors.length}
+            hint={t('metrics.collectorsHint')}
+          />
+          <DetailMetric
+            icon={<Clock3 size={16} strokeWidth={2.25} />}
+            label={t('metrics.updated')}
+            value={formatDateTime(route.updatedAt)}
+            hint={t('metrics.created', {
+              date: formatDateTime(route.createdAt),
+            })}
+          />
+        </div>
+
+        <DetailTabs
+          tabs={tabs}
+          activeTab={activeTab}
+          onChange={(tabId) => setActiveTab(tabId as RouteDetailTab)}
+          ariaLabel={t('tabsLabel')}
+          idPrefix="route-detail"
+        />
+
+        <DetailTabPanel tabId="info" activeTab={activeTab} idPrefix="route-detail">
+          <DetailSection
+            icon={<RouteIcon size={18} strokeWidth={2.25} />}
+            title={t('sections.info')}
+            description={t('sections.infoDesc')}
+          >
+            <div className="detail-surface__fields detail-surface__fields--2">
+              <DetailField
+                icon={<Hash size={12} strokeWidth={2.25} />}
+                label={t('fields.routeId')}
+                value={route.id}
+              />
+              <DetailField
+                icon={<UserRound size={12} strokeWidth={2.25} />}
+                label={t('fields.lenderId')}
+                value={route.lenderId}
+              />
+              <DetailField
+                icon={<Wallet size={12} strokeWidth={2.25} />}
+                label={t('fields.loans')}
+                value={route.loanCount}
+              />
+              <DetailField
+                icon={<Clock3 size={12} strokeWidth={2.25} />}
+                label={t('fields.created')}
+                value={formatDateTime(route.createdAt)}
+              />
+              <DetailField
+                icon={<Clock3 size={12} strokeWidth={2.25} />}
+                label={t('fields.updated')}
+                value={formatDateTime(route.updatedAt)}
+              />
+            </div>
+          </DetailSection>
+        </DetailTabPanel>
+
+        <DetailTabPanel
+          tabId="collectors"
+          activeTab={activeTab}
+          idPrefix="route-detail"
+        >
+          <DetailSection
+            icon={<MapPinned size={18} strokeWidth={2.25} />}
+            title={t('sections.collectors')}
+            description={t('sections.collectorsDesc')}
+          >
+            <DataTable
+              columns={collectorColumns}
+              data={pagedCollectors}
+              rowKey={(collector) => collector.id}
+              emptyMessage={t('collectors.emptyTitle')}
+              page={collectorsPage}
+              rowsPerPage={collectorsRowsPerPage}
+              total={assignedDebtCollectors.length}
+              onPageChange={setCollectorsPage}
+              onRowsPerPageChange={(nextRowsPerPage) => {
+                setCollectorsRowsPerPage(nextRowsPerPage)
+                setCollectorsPage(0)
+              }}
+              previousPageLabel={t('pagination.prev')}
+              nextPageLabel={t('pagination.next')}
+              rowsPerPageLabel={t('pagination.rows')}
+              rangeLabel={(start, end, totalCount) =>
+                t('pagination.range', { start, end, total: totalCount })
+              }
+              regionLabel={t('sections.collectors')}
+            />
+          </DetailSection>
+        </DetailTabPanel>
+
+        <DetailTabPanel tabId="loans" activeTab={activeTab} idPrefix="route-detail">
+          <DetailSection
+            icon={<Wallet size={18} strokeWidth={2.25} />}
+            title={t('sections.loans')}
+            description={t('sections.loansDesc')}
+            actions={
+              showAddLoan ? null : (
                 <Button
                   variant="contained"
+                  color="secondary"
+                  startIcon={<Plus size={18} strokeWidth={2.25} aria-hidden />}
                   onClick={() => setShowAddLoan(true)}
                 >
-                  Add Loan
+                  {t('addLoan')}
                 </Button>
-              </Stack>
-
-              <Divider />
-
-              {showAddLoan ? (
-                <AddRouteLoanForm
-                  routeId={route.id}
-                  onSuccess={async () => {
-                    setShowAddLoan(false);
-                    await loadRouteData();
-                  }}
-                  onCancel={() => setShowAddLoan(false)}
-                />
-              ) : null}
-
-              <RouteLoansTable
+              )
+            }
+          >
+            {showAddLoan ? (
+              <AddRouteLoanForm
                 routeId={route.id}
-                loans={route.loans}
-                onChange={() => {
-                  void loadRouteData();
+                onSuccess={async () => {
+                  setShowAddLoan(false)
+                  await loadRouteData()
                 }}
+                onCancel={() => setShowAddLoan(false)}
               />
-            </Stack>
-          </CardContent>
-        </Card>
-      </Stack>
+            ) : null}
+
+            <RouteLoansTable
+              routeId={route.id}
+              loans={route.loans}
+              onChange={() => {
+                void loadRouteData()
+              }}
+            />
+          </DetailSection>
+        </DetailTabPanel>
+      </DetailSurface>
     </Box>
-  );
+  )
 }

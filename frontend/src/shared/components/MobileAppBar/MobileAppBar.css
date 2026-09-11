@@ -29,7 +29,7 @@
   --mab-glass: #0d0e12;
   --mab-glass-border: rgba(255, 255, 255, 0.1);
   --mab-item-hover: rgba(202, 255, 5, 0.12);
-  --mab-toggle: #caff05;
+  --mab-toggle: var(--mab-primary);
   --mab-bar-border: rgba(20, 22, 26, 0.08);
   --mab-bar-shadow: 0 8px 20px rgba(20, 22, 26, 0.08);
 }
@@ -37,6 +37,7 @@
 .mobile-appbar[data-theme='light'][data-open='true'],
 .mobile-appbar[data-theme='light'].mobile-appbar--solid[data-open='true'] {
   --mab-surface: #0d0e12;
+  --mab-toggle: #caff05;
   --mab-bar-border: rgba(255, 255, 255, 0.08);
   --mab-bar-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
 }
@@ -109,6 +110,14 @@
   background: rgba(202, 255, 5, 0.12);
 }
 
+.mobile-appbar[data-theme='light']:not([data-open='true']) .mobile-appbar__toggle:hover {
+  background: rgba(6, 56, 50, 0.08);
+}
+
+.mobile-appbar[data-theme='light'][data-open='true'] .mobile-appbar__toggle:hover {
+  background: rgba(202, 255, 5, 0.12);
+}
+
 .mobile-appbar__toggle:focus-visible {
   outline: 2px solid var(--mab-secondary);
   outline-offset: 2px;
@@ -178,7 +187,11 @@
   font-weight: 500;
   text-align: left;
   cursor: pointer;
-  transition: background-color 180ms ease, color 180ms ease, opacity 160ms ease;
+  transition:
+    background-color 180ms ease,
+    color 180ms ease,
+    opacity 160ms ease,
+    transform 160ms ease;
 }
 
 .mobile-appbar__item:hover {
@@ -210,21 +223,24 @@
 .mobile-appbar__item[data-fade='out'],
 .mobile-appbar__theme[data-fade='out'] {
   opacity: 0;
+  transform: translateX(-10px);
   pointer-events: none;
-  transition: opacity 160ms ease;
+  transition: opacity 160ms ease, transform 160ms ease;
 }
 
 .mobile-appbar__item[data-fade='in'],
 .mobile-appbar__theme[data-fade='in'] {
-  animation: mobile-appbar-item-fade-in 180ms ease both;
+  animation: mobile-appbar-item-fade-in 220ms ease both;
 }
 
 @keyframes mobile-appbar-item-fade-in {
   from {
     opacity: 0;
+    transform: translateX(-18px);
   }
   to {
     opacity: 1;
+    transform: translateX(0);
   }
 }
 
@@ -308,7 +324,6 @@
 }
 
 .mobile-appbar__footer {
-  margin-top: auto;
   padding-top: 12px;
   border-top: 1px solid var(--mab-glass-border);
   display: flex;
@@ -317,7 +332,7 @@
 }
 
 .mobile-appbar__logout {
-  margin-bottom: 4px;
+  margin-top: auto;
 }
 
 .mobile-appbar__user-card {

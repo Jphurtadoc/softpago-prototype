@@ -30,6 +30,8 @@ export interface GetRoutesParams {
   page?: number;
   limit?: number;
   search?: string;
+  hasLoans?: boolean;
+  hasCollectors?: boolean;
   sortBy?: 'name' | 'createdAt' | 'updatedAt';
   order?: 'asc' | 'desc';
 }

@@ -1,5 +1,10 @@
 import { createBrowserRouter } from 'react-router-dom';
 
+import type { DictionaryNamespace } from '@/dictionaries';
+import {
+  DocumentTitleOutlet,
+  type DocumentTitleHandle,
+} from '@/shared/components/layouts/DocumentTitleOutlet';
 import { MainLayout } from '@/shared/components/layouts/MainLayout';
 
 import { DEFAULT_ITEMS } from '@/shared/components/Navbar/defaultNavItems';
@@ -33,11 +38,30 @@ import type { ComponentType } from 'react';
 const PAGE_BY_ID: Record<string, ComponentType> = {
   inicio: HomePage,
   pagos: PaymentsPage,
-  configuraciones: SettingsPage,
   reportes: ReportsPage,
   prestamos: LoansPage,
   rutas: RoutesPage,
 };
+
+const DOCUMENT_TITLE_NS_BY_ID: Record<string, DictionaryNamespace> = {
+  inicio: 'home/overview',
+  pagos: 'payments/dashboard',
+  reportes: 'reports/dashboard',
+  prestamos: 'loans/list',
+  rutas: 'routes/list',
+};
+
+/**
+ * Builds a route handle that maps a screen to its document title key.
+ */
+function createDocumentTitleHandle(
+  documentTitleNs: DictionaryNamespace,
+  documentTitleKey?: string,
+): DocumentTitleHandle {
+  return documentTitleKey
+    ? { documentTitleNs, documentTitleKey }
+    : { documentTitleNs };
+}
 
 const dashboardRoutes = DEFAULT_ITEMS.map((item) => {
   const Page = PAGE_BY_ID[item.id];
@@ -45,58 +69,78 @@ const dashboardRoutes = DEFAULT_ITEMS.map((item) => {
   return {
     path: item.url,
     element: <Page />,
+    handle: createDocumentTitleHandle(DOCUMENT_TITLE_NS_BY_ID[item.id]),
   };
 });
 
 export const router = createBrowserRouter([
   {
-    path: '/',
-    element: <LoginPage />,
-  },
-
-  {
-    path: '/registro',
-    element: <RegisterPage />,
-  },
-
-  {
-    path: '/olvide-contrasena',
-    element: <ForgotPasswordPage />,
-  },
-
-  {
-    element: <MainLayout />,
+    element: <DocumentTitleOutlet />,
     children: [
-      ...dashboardRoutes,
-
       {
-        path: '/loans/new',
-        element: <CreateLoanPage />,
+        path: '/',
+        element: <LoginPage />,
       },
 
       {
-        path: '/loans/:id',
-        element: <LoanDetailsPage />,
+        path: '/registro',
+        element: <RegisterPage />,
+        handle: createDocumentTitleHandle('auth/create-account'),
       },
 
       {
-        path: '/loans/:id/edit',
-        element: <EditLoanPage />,
+        path: '/olvide-contrasena',
+        element: <ForgotPasswordPage />,
+        handle: createDocumentTitleHandle('auth/forgot-password'),
       },
 
       {
-        path: '/routes/new',
-        element: <CreateRoutePage />,
-      },
+        element: <MainLayout />,
+        children: [
+          ...dashboardRoutes,
 
-      {
-        path: '/routes/:id',
-        element: <RouteDetailsPage />,
-      },
+          {
+            path: '/configuraciones',
+            element: <SettingsPage />,
+            handle: createDocumentTitleHandle('settings/page'),
+          },
 
-      {
-        path: '/routes/:id/edit',
-        element: <EditRoutePage />,
+          {
+            path: '/loans/new',
+            element: <CreateLoanPage />,
+            handle: createDocumentTitleHandle('loans/list', 'createLoan'),
+          },
+
+          {
+            path: '/loans/:id',
+            element: <LoanDetailsPage />,
+            handle: createDocumentTitleHandle('loans/details'),
+          },
+
+          {
+            path: '/loans/:id/edit',
+            element: <EditLoanPage />,
+            handle: createDocumentTitleHandle('loans/edit'),
+          },
+
+          {
+            path: '/routes/new',
+            element: <CreateRoutePage />,
+            handle: createDocumentTitleHandle('routes/list', 'createRoute'),
+          },
+
+          {
+            path: '/routes/:id',
+            element: <RouteDetailsPage />,
+            handle: createDocumentTitleHandle('routes/details', 'titleFallback'),
+          },
+
+          {
+            path: '/routes/:id/edit',
+            element: <EditRoutePage />,
+            handle: createDocumentTitleHandle('routes/edit'),
+          },
+        ],
       },
     ],
   },

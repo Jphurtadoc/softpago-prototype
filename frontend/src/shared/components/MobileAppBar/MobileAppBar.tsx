@@ -9,7 +9,7 @@ import {
   THEME_MODE_ICON_STROKE,
 } from '@/shared/icons/theme-mode-icons'
 import { DEFAULT_ITEMS, type NavItem } from '../Navbar/defaultNavItems'
-import type { ThemePreference } from '../Navbar/Navbar'
+import type { ActiveUserMenuItem, ThemePreference } from '../Navbar/Navbar'
 import './MobileAppBar.css'
 
 /** Two-bar burger icon in Lucide IconNode format for morphicons. */
@@ -18,9 +18,10 @@ const Menu2Bars: IconNode = [
   ['line', { x1: '4', x2: '20', y1: '15', y2: '15' }],
 ]
 
+const BRAND_PRIMARY = '/logo.svg'
 const BRAND_SECONDARY = '/logo_secondary.svg'
 const THEME_OPTIONS: ReadonlyArray<ThemePreference> = ['light', 'dark', 'system']
-const ITEM_FADE_STAGGER_MS = 40
+const ITEM_FADE_STAGGER_MS = 60
 
 type PanelMode = 'nav' | 'account'
 
@@ -72,7 +73,8 @@ const IconSettings = () => (
 )
 
 export interface MobileAppBarProps {
-  activeItem?: string
+  /** Active nav item id, or `null` when no main-nav route is selected. */
+  activeItem?: string | null
   onItemClick?: (item: NavItem) => void
   items?: NavItem[]
   theme?: 'light' | 'dark'
@@ -85,6 +87,8 @@ export interface MobileAppBarProps {
   onAccountClick?: () => void
   onSettingsClick?: () => void
   onLogoutClick?: () => void
+  /** Active avatar-menu entry on the settings route. */
+  activeUserMenuItem?: ActiveUserMenuItem | null
 }
 
 /**
@@ -105,8 +109,10 @@ function MobileAppBar({
   onAccountClick,
   onSettingsClick,
   onLogoutClick,
+  activeUserMenuItem = null,
 }: MobileAppBarProps) {
-  const { t } = useTranslation('common/theme')
+  const { t } = useTranslation('common/nav')
+  const { t: tTheme } = useTranslation('common/theme')
   const panelId = useId()
   const fadeTimeoutRef = useRef<number | null>(null)
   const [isOpen, setIsOpen] = useState(false)
@@ -114,8 +120,10 @@ function MobileAppBar({
   const [panelMode, setPanelMode] = useState<PanelMode>('nav')
   const [moreIconMode, setMoreIconMode] = useState<PanelMode>('nav')
   const [navFade, setNavFade] = useState<'in' | 'out'>('in')
-  const active = activeItem ?? items[0]?.id
-  const displayName = userName?.trim().split(/\s+/)[0] || 'Usuario'
+  const active = activeItem !== undefined ? activeItem : items[0]?.id
+  const brandLogoSrc =
+    theme === 'light' && !isOpen ? BRAND_PRIMARY : BRAND_SECONDARY
+  const displayName = userName?.trim().split(/\s+/)[0] || t('userFallback')
   const displayRole = userRole
     ? `${userRole.charAt(0).toUpperCase()}${userRole.slice(1).toLowerCase()}`
     : ''
@@ -132,9 +140,12 @@ function MobileAppBar({
     }
   }
 
-  const getItemFadeStyle = (index: number): CSSProperties | undefined => {
-    if (navFade !== 'in') return undefined
-    return { animationDelay: `${index * ITEM_FADE_STAGGER_MS}ms` }
+  const getItemFadeStyle = (index: number): CSSProperties => {
+    const delayMs = index * ITEM_FADE_STAGGER_MS
+    if (navFade === 'out') {
+      return { transitionDelay: `${delayMs}ms` }
+    }
+    return { animationDelay: `${delayMs}ms` }
   }
 
   const handleClose = () => {
@@ -146,16 +157,21 @@ function MobileAppBar({
   }
 
   const handleToggle = () => {
-    setIsOpen((prev) => {
-      if (prev) {
-        clearFadeTimeout()
-        setPanelMode('nav')
-        setMoreIconMode('nav')
-        setNavFade('in')
-        return false
-      }
-      return true
-    })
+    if (isOpen) {
+      clearFadeTimeout()
+      setPanelMode('nav')
+      setMoreIconMode('nav')
+      setNavFade('in')
+      setIsOpen(false)
+      return
+    }
+    clearFadeTimeout()
+    setNavFade('out')
+    setIsOpen(true)
+    fadeTimeoutRef.current = window.setTimeout(() => {
+      setNavFade('in')
+      fadeTimeoutRef.current = null
+    }, 0)
   }
 
   const handleItemClick = (item: NavItem) => {
@@ -166,6 +182,8 @@ function MobileAppBar({
   const handleToggleAccountPanel = () => {
     if (navFade === 'out') return
     const nextMode: PanelMode = panelMode === 'account' ? 'nav' : 'account'
+    const fadeItemCount =
+      panelMode === 'nav' ? items.length + (onLogoutClick ? 1 : 0) : 3
     setMoreIconMode(nextMode)
     setNavFade('out')
     clearFadeTimeout()
@@ -173,7 +191,7 @@ function MobileAppBar({
       setPanelMode(nextMode)
       setNavFade('in')
       fadeTimeoutRef.current = null
-    }, 160)
+    }, 160 + ITEM_FADE_STAGGER_MS * Math.max(fadeItemCount - 1, 0))
   }
 
   useEffect(() => {
@@ -225,7 +243,7 @@ function MobileAppBar({
       <header className="mobile-appbar__bar">
         <Link to="/inicio" className="mobile-appbar__brand" aria-label="SoftPago">
           <img
-            src={BRAND_SECONDARY}
+            src={brandLogoSrc}
             alt="SoftPago"
             className="mobile-appbar__logo"
           />
@@ -234,7 +252,7 @@ function MobileAppBar({
         <button
           type="button"
           className="mobile-appbar__toggle"
-          aria-label={isOpen ? 'Cerrar menú' : 'Abrir menú'}
+          aria-label={isOpen ? t('closeMenu') : t('openMenu')}
           aria-expanded={isOpen}
           aria-controls={panelId}
           onClick={handleToggle}
@@ -253,7 +271,7 @@ function MobileAppBar({
         id={panelId}
         className={`mobile-appbar__panel${isOpen ? ' mobile-appbar__panel--open' : ''}`}
         role="navigation"
-        aria-label={panelMode === 'account' ? 'Menú de usuario' : 'Navegación principal'}
+        aria-label={panelMode === 'account' ? t('userMenuAria') : t('mainNavAria')}
         aria-hidden={!isOpen}
       >
         <div className="mobile-appbar__panel-inner">
@@ -274,19 +292,44 @@ function MobileAppBar({
                       onClick={() => handleItemClick(item)}
                     >
                       <span className="mobile-appbar__item-icon">{item.icon}</span>
-                      <span className="mobile-appbar__item-label">{item.title}</span>
+                      <span className="mobile-appbar__item-label">{t(item.titleKey)}</span>
                     </button>
                   )
                 })}
+                {onLogoutClick && (
+                  <button
+                    type="button"
+                    className="mobile-appbar__item mobile-appbar__item--danger mobile-appbar__logout"
+                    data-fade={navFade}
+                    style={getItemFadeStyle(items.length)}
+                    tabIndex={isOpen ? 0 : -1}
+                    onClick={() => {
+                      onLogoutClick()
+                      handleClose()
+                    }}
+                  >
+                    <span className="mobile-appbar__item-icon">
+                      <IconLogout />
+                    </span>
+                    <span className="mobile-appbar__item-label">{t('logout')}</span>
+                  </button>
+                )}
               </>
             ) : (
               <>
                 <button
                   type="button"
-                  className="mobile-appbar__item"
+                  className={`mobile-appbar__item${
+                    activeUserMenuItem === 'account'
+                      ? ' mobile-appbar__item--active'
+                      : ''
+                  }`}
                   data-fade={navFade}
                   style={getItemFadeStyle(0)}
                   tabIndex={isOpen ? 0 : -1}
+                  aria-current={
+                    activeUserMenuItem === 'account' ? 'page' : undefined
+                  }
                   onClick={() => {
                     onAccountClick?.()
                     handleClose()
@@ -295,15 +338,22 @@ function MobileAppBar({
                   <span className="mobile-appbar__item-icon">
                     <IconAccount />
                   </span>
-                  <span className="mobile-appbar__item-label">Cuenta</span>
+                  <span className="mobile-appbar__item-label">{t('account')}</span>
                 </button>
 
                 <button
                   type="button"
-                  className="mobile-appbar__item"
+                  className={`mobile-appbar__item${
+                    activeUserMenuItem === 'settings'
+                      ? ' mobile-appbar__item--active'
+                      : ''
+                  }`}
                   data-fade={navFade}
                   style={getItemFadeStyle(1)}
                   tabIndex={isOpen ? 0 : -1}
+                  aria-current={
+                    activeUserMenuItem === 'settings' ? 'page' : undefined
+                  }
                   onClick={() => {
                     onSettingsClick?.()
                     handleClose()
@@ -312,7 +362,7 @@ function MobileAppBar({
                   <span className="mobile-appbar__item-icon">
                     <IconSettings />
                   </span>
-                  <span className="mobile-appbar__item-label">Configuraciones</span>
+                  <span className="mobile-appbar__item-label">{t('settings')}</span>
                 </button>
 
                 <div
@@ -321,11 +371,11 @@ function MobileAppBar({
                   style={getItemFadeStyle(2)}
                   role="none"
                 >
-                  <span className="mobile-appbar__theme-label">{t('groupLabel')}</span>
+                  <span className="mobile-appbar__theme-label">{tTheme('groupLabel')}</span>
                   <div
                     className="mobile-appbar__theme-segment"
                     role="group"
-                    aria-label={t('groupLabel')}
+                    aria-label={tTheme('groupLabel')}
                   >
                     <span
                       className="mobile-appbar__theme-thumb"
@@ -344,7 +394,7 @@ function MobileAppBar({
                           className={`mobile-appbar__theme-btn${
                             isSelected ? ' mobile-appbar__theme-btn--active' : ''
                           }`}
-                          aria-label={t(value)}
+                          aria-label={tTheme(value)}
                           aria-pressed={isSelected}
                           tabIndex={isOpen ? 0 : -1}
                           onClick={() => onThemeChange?.(value)}
@@ -364,22 +414,6 @@ function MobileAppBar({
           </div>
 
           <div className="mobile-appbar__footer">
-            {panelMode === 'nav' && onLogoutClick && (
-              <button
-                type="button"
-                className="mobile-appbar__item mobile-appbar__item--danger mobile-appbar__logout"
-                tabIndex={isOpen ? 0 : -1}
-                onClick={() => {
-                  onLogoutClick()
-                  handleClose()
-                }}
-              >
-                <span className="mobile-appbar__item-icon">
-                  <IconLogout />
-                </span>
-                <span className="mobile-appbar__item-label">Cerrar sesión</span>
-              </button>
-            )}
             <div className="mobile-appbar__user-card">
               <div className="mobile-appbar__avatar" aria-hidden="true">
                 {userAvatarUrl ? (
@@ -408,8 +442,8 @@ function MobileAppBar({
                 }`}
                 aria-label={
                   moreIconMode === 'account'
-                    ? 'Volver a navegación'
-                    : 'Menú de usuario'
+                    ? t('backToNav')
+                    : t('userMenuAria')
                 }
                 aria-pressed={moreIconMode === 'account'}
                 tabIndex={isOpen ? 0 : -1}
@@ -432,7 +466,7 @@ function MobileAppBar({
         <button
           type="button"
           className="mobile-appbar__backdrop"
-          aria-label="Cerrar menú"
+          aria-label={t('closeMenu')}
           tabIndex={-1}
           onClick={handleClose}
         />

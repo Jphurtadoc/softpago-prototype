@@ -1,5 +1,6 @@
 /** Portuguese copy for the Overview (home) dashboard. */
 const homeOverviewPt = {
+  title: 'Início',
   welcome: 'Olá, {{name}}',
   subtitle: 'Visão geral da sua operação.',
   loadError: 'Não foi possível carregar o painel.',
@@ -11,14 +12,31 @@ const homeOverviewPt = {
     hide: 'Ocultar saldo',
   },
   balance: {
-    title: 'Saldo',
-    badge: '+{{percent}}% este mês',
+    title: 'Balance',
+    myBalance: 'Meu saldo',
     dayStart: 'Início do dia',
-    paymentsToday: 'Pagamentos hoje',
+    incoming: 'Recebido',
+    loan: 'Empréstimos',
+    profit: 'Lucro',
+    newLoans: 'Novos',
+    repeatClients: 'Clientes',
+    collection: 'Arrecadação',
+    toCollect: 'Total a arrecadar',
+    collected: 'Arrecadado',
+    progressLabel: 'Progresso de arrecadação {{percent}}%',
     showMetric: 'Mostrar {{label}}',
     hideMetric: 'Ocultar {{label}}',
     openPayments: 'Ir para pagamentos',
     currency: 'COP',
+  },
+  kpis: {
+    routes: 'Rotas',
+    clients: 'Clientes',
+    loanMoney: 'Em empréstimos',
+  },
+  chart: {
+    title: 'Saldo recente',
+    subtitle: 'Últimos 6 meses',
   },
   quickActions: {
     title: 'Ações rápidas',

@@ -2,6 +2,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
   type ReactNode,
@@ -76,6 +77,12 @@ export function ColorModeProvider({ children }: ColorModeProviderProps) {
       // Ignore storage access errors in restricted contexts.
     }
   }, [])
+
+  useEffect(() => {
+    const root = document.documentElement
+    root.dataset.theme = resolvedMode
+    root.style.colorScheme = resolvedMode
+  }, [resolvedMode])
 
   const value = useMemo(
     () => ({ preference, resolvedMode, setPreference }),

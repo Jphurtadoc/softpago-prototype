@@ -2,15 +2,22 @@
   min-height: 100vh;
 }
 
+/* Secondary lime ambient mesh — same structure as prior orange/green lights */
 .app[data-theme='dark'] {
-  background: #0d0e12;
+  background-color: #0d0e12;
+  background-image:
+    radial-gradient(ellipse 620px 480px at 14% 16%, rgba(202, 255, 5, 0.08), transparent 60%),
+    radial-gradient(ellipse 620px 520px at 88% 84%, rgba(202, 255, 5, 0.06), transparent 60%),
+    radial-gradient(circle, rgba(241, 239, 233, 0.04) 1px, transparent 1px);
+  background-size: auto, auto, 22px 22px;
+  background-repeat: no-repeat, no-repeat, repeat;
 }
 
 .app[data-theme='light'] {
   background-color: #f7f5f1;
   background-image:
-    radial-gradient(ellipse 620px 480px at 14% 16%, rgba(227, 160, 82, 0.18), transparent 60%),
-    radial-gradient(ellipse 620px 520px at 88% 84%, rgba(63, 174, 122, 0.18), transparent 60%),
+    radial-gradient(ellipse 620px 480px at 14% 16%, rgba(202, 255, 5, 0.14), transparent 60%),
+    radial-gradient(ellipse 620px 520px at 88% 84%, rgba(202, 255, 5, 0.11), transparent 60%),
     radial-gradient(circle, rgba(20, 22, 26, 0.05) 1px, transparent 1px);
   background-size: auto, auto, 22px 22px;
   background-repeat: no-repeat, no-repeat, repeat;
@@ -18,9 +25,12 @@
 
 .app__content {
   display: flex;
-  align-items: flex-start;
-  justify-content: stretch;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
   min-height: 100vh;
+  min-width: 0;
+  box-sizing: border-box;
   font-family: 'Inter', system-ui, sans-serif;
   transition: margin-left 0.32s cubic-bezier(0.32, 0.72, 0, 1), color 0.3s ease;
 }
@@ -31,4 +41,31 @@
 
 .app[data-theme='light'] .app__content {
   color: #1a1c20;
+}
+
+/* MUI v9: outlined/contained + colorPrimary are separate classes */
+.app[data-theme='dark'] .MuiButton-outlined.MuiButton-colorPrimary,
+html[data-theme='dark'] .MuiButton-outlined.MuiButton-colorPrimary {
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.7) !important;
+  background-color: transparent !important;
+}
+
+.app[data-theme='dark'] .MuiButton-outlined.MuiButton-colorPrimary:hover,
+html[data-theme='dark'] .MuiButton-outlined.MuiButton-colorPrimary:hover {
+  color: #ffffff !important;
+  border-color: #ffffff !important;
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.app[data-theme='dark'] .MuiButton-contained.MuiButton-colorPrimary,
+html[data-theme='dark'] .MuiButton-contained.MuiButton-colorPrimary {
+  background-color: #ffffff !important;
+  color: #063832 !important;
+}
+
+.app[data-theme='dark'] .MuiButton-contained.MuiButton-colorPrimary:hover,
+html[data-theme='dark'] .MuiButton-contained.MuiButton-colorPrimary:hover {
+  background-color: #f4f2ec !important;
+  color: #063832 !important;
 }

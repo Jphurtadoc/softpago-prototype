@@ -1,0 +1,67 @@
+/** Spanish copy for the loan details page. */
+const loansDetailsEs = {
+  title: 'Detalle del préstamo',
+  subtitle: 'Consulta la información y el cronograma de pago.',
+  loading: 'Cargando detalle del préstamo…',
+  missingId: 'Falta el ID del préstamo',
+  notFound: 'Préstamo no encontrado',
+  back: 'Volver',
+  backToList: 'Volver a préstamos',
+  edit: 'Editar',
+  tabsLabel: 'Secciones del préstamo',
+  tabs: {
+    parties: 'Partes',
+    financial: 'Finanzas',
+    schedule: 'Cronograma',
+    record: 'Registro',
+  },
+  hero: {
+    totalLabel: 'Monto total',
+    principalInterest: 'Capital {{amount}} · Interés {{rate}}% ({{type}})',
+    installmentsPaid: 'Cuotas pagadas',
+  },
+  metrics: {
+    installment: 'Cuota',
+    remaining: 'Pendiente',
+    remainingHint: 'Saldo estimado',
+    dueDate: 'Vencimiento',
+    started: 'Inicio {{date}}',
+    interest: 'Interés',
+  },
+  sections: {
+    parties: 'Partes',
+    partiesDesc: 'Personas y asignación vinculadas a este préstamo.',
+    financial: 'Información financiera',
+    financialDesc: 'Montos y configuración de interés.',
+    schedule: 'Cronograma de pago',
+    scheduleDesc: 'Frecuencia y avance de cuotas.',
+    record: 'Registro',
+    recordDesc: 'Fechas de auditoría de este préstamo.',
+  },
+  fields: {
+    loanId: 'ID préstamo',
+    lenderId: 'ID prestamista',
+    borrowerId: 'ID prestatario',
+    routeId: 'ID ruta',
+    debtCollectorId: 'ID cobrador',
+    amount: 'Monto',
+    interest: 'Interés',
+    totalAmount: 'Monto total',
+    installmentAmount: 'Valor de cuota',
+    frequency: 'Frecuencia',
+    installments: 'Cuotas',
+    startDate: 'Fecha de inicio',
+    dueDate: 'Fecha de vencimiento',
+    created: 'Creado',
+    updated: 'Actualizado',
+    notAssigned: 'Sin asignar',
+  },
+  progress: {
+    payment: 'Progreso de pago',
+  },
+  errors: {
+    load: 'No se pudo cargar el préstamo',
+  },
+} as const
+
+export default loansDetailsEs
