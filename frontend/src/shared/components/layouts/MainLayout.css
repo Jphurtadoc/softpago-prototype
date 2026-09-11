@@ -1,0 +1,22 @@
+.app__content {
+  margin-left: 80px;
+  padding: 48px;
+  min-height: 100vh;
+  transition: margin-left 0.32s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.app__content--expanded {
+  margin-left: 248px;
+}
+
+.app__content h1 {
+  color: var(--text-h);
+}
+
+@media (max-width: 1024px) {
+  .app__content,
+  .app__content--expanded {
+    margin-left: 0;
+    padding: calc(56px + max(8px, env(safe-area-inset-top)) + 16px) 20px 32px;
+  }
+}

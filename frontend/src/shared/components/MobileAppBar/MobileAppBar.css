@@ -1,0 +1,481 @@
+.mobile-appbar {
+  --mab-bar-height: 56px;
+  --mab-ink: #e8e6e0;
+  --mab-ink-muted: #767c8c;
+  --mab-primary: #063832;
+  --mab-secondary: #caff05;
+  --mab-surface: #0d0e12;
+  --mab-glass: #0d0e12;
+  --mab-glass-border: rgba(255, 255, 255, 0.08);
+  --mab-item-hover: rgba(202, 255, 5, 0.12);
+  --mab-card-bg: rgba(255, 255, 255, 0.06);
+  --mab-toggle: #caff05;
+  --mab-bar-border: rgba(255, 255, 255, 0.08);
+  --mab-bar-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 40;
+  pointer-events: none;
+}
+
+.mobile-appbar[data-theme='light'] {
+  --mab-ink: #e8e6e0;
+  --mab-ink-muted: #a8adb8;
+  --mab-surface: #f7f5f1;
+  --mab-glass: #0d0e12;
+  --mab-glass-border: rgba(255, 255, 255, 0.1);
+  --mab-item-hover: rgba(202, 255, 5, 0.12);
+  --mab-toggle: #caff05;
+  --mab-bar-border: rgba(20, 22, 26, 0.08);
+  --mab-bar-shadow: 0 8px 20px rgba(20, 22, 26, 0.08);
+}
+
+.mobile-appbar[data-theme='light'][data-open='true'],
+.mobile-appbar[data-theme='light'].mobile-appbar--solid[data-open='true'] {
+  --mab-surface: #0d0e12;
+  --mab-bar-border: rgba(255, 255, 255, 0.08);
+  --mab-bar-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+}
+
+.mobile-appbar__bar {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  height: var(--mab-bar-height);
+  padding:
+    max(8px, env(safe-area-inset-top))
+    max(16px, env(safe-area-inset-right))
+    8px
+    max(16px, env(safe-area-inset-left));
+  box-sizing: border-box;
+  background: transparent;
+  transition: background-color 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+  pointer-events: auto;
+}
+
+.mobile-appbar--solid .mobile-appbar__bar {
+  background: var(--mab-surface);
+  border-bottom: 1px solid var(--mab-bar-border);
+  box-shadow: var(--mab-bar-shadow);
+}
+
+.mobile-appbar[data-open='true'] .mobile-appbar__bar {
+  background: #0d0e12;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+}
+
+.mobile-appbar__brand {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+  text-decoration: none;
+  color: inherit;
+}
+
+.mobile-appbar__logo {
+  display: block;
+  height: 22px;
+  width: auto;
+  max-width: 148px;
+  object-fit: contain;
+}
+
+.mobile-appbar__toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--mab-toggle);
+  cursor: pointer;
+  pointer-events: auto;
+  transition: background-color 180ms ease, color 180ms ease;
+}
+
+.mobile-appbar__toggle:hover {
+  background: rgba(202, 255, 5, 0.12);
+}
+
+.mobile-appbar__toggle:focus-visible {
+  outline: 2px solid var(--mab-secondary);
+  outline-offset: 2px;
+}
+
+.mobile-appbar__panel {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-height: 0;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(-8px);
+  transition:
+    max-height 320ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 220ms ease,
+    transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.mobile-appbar__panel--open {
+  max-height: calc(100dvh - var(--mab-bar-height) - env(safe-area-inset-top, 0px));
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.mobile-appbar__panel-inner {
+  margin: 0;
+  min-height: calc(100dvh - var(--mab-bar-height) - env(safe-area-inset-top, 0px));
+  padding:
+    10px
+    max(12px, env(safe-area-inset-right))
+    max(16px, env(safe-area-inset-bottom))
+    max(12px, env(safe-area-inset-left));
+  border-bottom: 1px solid var(--mab-glass-border);
+  background: var(--mab-glass);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-sizing: border-box;
+}
+
+.mobile-appbar__nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-height: 0;
+}
+
+.mobile-appbar__item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 48px;
+  margin: 0;
+  padding: 10px 14px;
+  border: none;
+  border-radius: 14px;
+  background: transparent;
+  color: #e8e6e0;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 180ms ease, color 180ms ease, opacity 160ms ease;
+}
+
+.mobile-appbar__item:hover {
+  background: var(--mab-item-hover);
+  color: var(--mab-secondary);
+}
+
+.mobile-appbar__item--active {
+  background: var(--mab-secondary);
+  color: var(--mab-primary);
+  font-weight: 600;
+}
+
+.mobile-appbar__item--active:hover {
+  background: var(--mab-secondary);
+  color: var(--mab-primary);
+}
+
+.mobile-appbar__item--danger:hover {
+  color: #ff8f8f;
+  background: rgba(217, 72, 76, 0.14);
+}
+
+.mobile-appbar__item:focus-visible {
+  outline: 2px solid var(--mab-secondary);
+  outline-offset: 2px;
+}
+
+.mobile-appbar__item[data-fade='out'],
+.mobile-appbar__theme[data-fade='out'] {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 160ms ease;
+}
+
+.mobile-appbar__item[data-fade='in'],
+.mobile-appbar__theme[data-fade='in'] {
+  animation: mobile-appbar-item-fade-in 180ms ease both;
+}
+
+@keyframes mobile-appbar-item-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.mobile-appbar__item-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  color: inherit;
+}
+
+.mobile-appbar__item-label {
+  min-width: 0;
+}
+
+.mobile-appbar__theme {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 14px;
+}
+
+.mobile-appbar__theme-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--mab-ink-muted);
+}
+
+.mobile-appbar__theme-segment {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  align-items: center;
+  height: 36px;
+  padding: 2px;
+  border-radius: 999px;
+  border: 1px solid var(--mab-glass-border);
+  background: var(--mab-card-bg);
+  box-sizing: border-box;
+}
+
+.mobile-appbar__theme-thumb {
+  position: absolute;
+  top: 2px;
+  bottom: 2px;
+  left: 2px;
+  width: calc((100% - 4px) / 3);
+  border-radius: 999px;
+  background: var(--mab-secondary);
+  transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+}
+
+.mobile-appbar__theme-btn {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 32px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--mab-ink-muted);
+  cursor: pointer;
+}
+
+.mobile-appbar__theme-btn--active,
+.mobile-appbar__theme-btn:hover {
+  color: var(--mab-primary);
+}
+
+.mobile-appbar__theme-btn:focus-visible {
+  outline: 2px solid var(--mab-secondary);
+  outline-offset: 2px;
+}
+
+.mobile-appbar__footer {
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid var(--mab-glass-border);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mobile-appbar__logout {
+  margin-bottom: 4px;
+}
+
+.mobile-appbar__user-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 48px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  box-sizing: border-box;
+}
+
+.mobile-appbar__avatar {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--mab-secondary) 35%, transparent);
+}
+
+.mobile-appbar__avatar img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.mobile-appbar__avatar-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: var(--mab-secondary);
+  color: var(--mab-primary);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.mobile-appbar__user-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+
+.mobile-appbar__user-name-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.mobile-appbar__user-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--mab-ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mobile-appbar__user-role-chip {
+  flex-shrink: 0;
+  max-width: 40%;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--mab-ink-muted);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: capitalize;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mobile-appbar__user-email {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--mab-ink-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mobile-appbar__user-more {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--mab-ink-muted);
+  cursor: pointer;
+  transition: background-color 180ms ease, color 180ms ease;
+}
+
+.mobile-appbar__user-more:hover,
+.mobile-appbar__user-more--active {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--mab-ink);
+}
+
+.mobile-appbar__user-more:focus-visible {
+  outline: 2px solid var(--mab-secondary);
+  outline-offset: 2px;
+}
+
+.mobile-appbar__backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: rgba(10, 12, 16, 0.45);
+  cursor: pointer;
+  pointer-events: auto;
+  animation: mobile-appbar-fade 200ms ease;
+}
+
+@keyframes mobile-appbar-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 1024px) {
+  .mobile-appbar {
+    display: block;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mobile-appbar__panel,
+  .mobile-appbar__bar,
+  .mobile-appbar__theme-thumb,
+  .mobile-appbar__item[data-fade],
+  .mobile-appbar__theme[data-fade] {
+    transition: none;
+    animation: none;
+  }
+
+  .mobile-appbar__backdrop {
+    animation: none;
+  }
+}

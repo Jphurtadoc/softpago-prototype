@@ -1,0 +1,16 @@
+// main.tsx
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import { ThemeProvider } from '@mui/material/styles';
+import { theme } from './shared/components/themes/theme.ts';
+import './shared/i18n/i18n';
+import './index.css';
+import App from './app/App.tsx';
+
+createRoot(document.getElementById('root')!).render(
+  <StrictMode>
+    <ThemeProvider theme={theme}>
+      <App />
+    </ThemeProvider>
+  </StrictMode>,
+);

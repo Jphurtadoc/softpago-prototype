@@ -1,0 +1,44 @@
+import { Meta, Canvas, Controls, Primary, Stories, Description } from '@storybook/addon-docs/blocks';
+import * as NavbarStories from './Navbar.stories';
+
+<Meta of={NavbarStories} name="Guide" />
+
+# Navbar
+
+<Description />
+
+## Preview
+
+<Primary />
+
+## Props
+
+<Controls of={NavbarStories.Default} />
+
+## Usage example
+
+```tsx
+import { useState } from 'react';
+import Navbar from '@/shared/components/Navbar/Navbar';
+
+function App() {
+  const [active, setActive] = useState('inicio');
+
+  return (
+    <Navbar activeItem={active} onItemClick={(item) => setActive(item.id)} />
+  );
+}
+```
+
+## Drawer behavior
+
+The sidebar slides in from the left and **only** changes state when the toggle
+button (☰) is pressed — it does not close on outside click or `Esc`, unlike a
+typical drawer/modal. This is intentional: in an admin panel, users usually want
+the menu to stay fixed while they navigate.
+
+<Canvas of={NavbarStories.Collapsed} />
+
+## All variants
+
+<Stories />

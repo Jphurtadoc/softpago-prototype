@@ -1,0 +1,82 @@
+---
+description: MongoDB best practices and integrations (schemas, queries, indexing, NestJS/Mongoose, security and performance)
+globs: ["**/*.schema.ts", "**/*.model.ts", "**/*.repository.ts", "**/*mongo*.ts", "**/*.entity.ts"]
+alwaysApply: false
+---
+
+# MongoDB — Best Practices Rules
+
+## Data Modeling
+
+- Design the schema around **access patterns**, not relational normalization. Start from "what queries will I run?" and model for those queries.
+- Prefer **embedding** when: the relationship is 1-N with a bounded N, the data is always read together, and it doesn't grow unbounded (e.g. an address inside a user).
+- Prefer **referencing** (`ObjectId` + `ref`) when: the relationship is N-N, subdocuments grow unbounded, or they're queried/updated independently of the parent.
+- Avoid unbounded arrays inside a document (risk of exceeding 16MB and degrading performance). If an array can grow indefinitely (logs, comments, events), use a separate collection referencing the parent.
+- Apply the **bucket pattern** for time-series or high-volume data (metrics, events, logs), grouping by time window instead of one document per event.
+- Use the **polymorphic pattern** (a discriminant `type`/`kind` field) when several entities share a collection but have different shapes (e.g. `opportunities`, `tasks` under a common workflow engine).
+- Consider the **extended reference pattern**: duplicate a small, stable subset of fields from a referenced document (e.g. `clientName` inside `project`) to avoid `$lookup` on the most frequent queries. Accept the controlled duplication as a read/write trade-off.
+- Explicitly define the **soft delete** strategy (`deletedAt`) vs. hard delete from schema design, not as an afterthought.
+
+## Indexing
+
+- Every field used in `find`, `sort`, or as part of a frequent filter should have an index. Verify with `.explain("executionStats")` that the query uses `IXSCAN`, not `COLLSCAN`.
+- Follow the **ESR rule (Equality, Sort, Range)** when designing compound indexes: equality fields first, then sort fields, then range fields.
+- Use **compound** indexes instead of multiple single-field indexes when queries combine several fields; Mongo can't efficiently use more than one index per query (index intersection is the exception, not the rule).
+- Enforce `unique: true` at the index level for business invariants (emails, slugs), never only at the application validation layer.
+- Use **TTL indexes** (`expireAfterSeconds`) for naturally expiring data (tokens, sessions, OTP codes) instead of manual cleanup jobs.
+- Use **partial indexes** (`partialFilterExpression`) when the index only applies to a subset of documents (e.g. email uniqueness only where `active: true`).
+- Avoid indexing high-cardinality fields that are never queried, and periodically review unused indexes with `$indexStats`.
+- Don't create indexes in production without confirming an online/non-blocking build (background builds have been the default since 4.2, but verify on large collections).
+
+## Queries and Aggregations
+
+- Use **projection** (`.select()` / the second argument of `find`) to fetch only the fields you need, especially in list views.
+- In the **aggregation pipeline**, place `$match` and `$sort` as early as possible to shrink the dataset before costly stages (`$lookup`, `$group`, `$unwind`).
+- Avoid hot-path `$lookup` for very frequent relations; consider the extended reference pattern or partial denormalization instead.
+- Use `$facet` to combine pagination + total count in a single query instead of two round-trips.
+- For pagination over large datasets, prefer **cursor-based pagination** (`_id > lastId` with an index) over `skip()`, which degrades linearly with offset.
+- Use `Promise.all` for independent operations, but never for writes that require atomic transaction guarantees (use sessions/transactions there instead).
+- Avoid the N+1 pattern (query-in-a-loop) — resolve it with `$in`, `$lookup`, or batching.
+
+## Transactions and Consistency
+
+- Use **multi-document transactions** (`session.withTransaction`) only when atomicity across collections is truly required; they carry a performance cost and need a replica set/sharded cluster.
+- Prefer document-level atomic operations (`$inc`, `$push`, `findOneAndUpdate` with state filters) over transactions when the case allows it — cheaper and more scalable.
+- Implement **optimistic concurrency control** with a `version` (or `updatedAt`) field when multiple processes can write to the same document concurrently.
+
+## Validation and Schema
+
+- Define **JSON Schema validation** at the collection level (`$jsonSchema`) as a last line of defense, in addition to application-layer validation (DTOs/Zod/class-validator).
+- Don't rely on Mongo's schema flexibility to skip schema design — the absence of a rigid schema doesn't mean the absence of a contract.
+
+## NestJS + Mongoose Integration
+
+- Define schemas with `@Schema()` / `@Prop()` from `@nestjs/mongoose`, with `timestamps: true` for automatic `createdAt`/`updatedAt`.
+- Encapsulate data access in **dedicated repositories/services**; controllers and domain services shouldn't inject `Model<T>` directly — keep query logic testable and centralized.
+- Use **input DTOs** validated with `class-validator`, decoupled from the Mongoose schema — never expose the persistence schema directly through the API.
+- Configure `MongooseModule.forRootAsync` reading the URI from `ConfigService`, never hardcoded.
+- Define indexes in the schema via `@Prop({ index: true })` or explicit `schema.index(...)`, and sync them in CI/deploy (`syncIndexes()` in a migration script, not on app bootstrap in production).
+- Use **lean queries** (`.lean()`) for reads that don't need Mongoose instance methods or change tracking — noticeably reduces memory and CPU overhead.
+- Handle specific Mongo errors (code `11000` for duplicate key) with a dedicated `ExceptionFilter` instead of repeating try/catch in every service.
+
+## Connection and Configuration
+
+- Tune **connection pooling** (`maxPoolSize`) to expected load; don't leave the default unevaluated on high-traffic services.
+- Configure `retryWrites=true` and `w: "majority"` in the connection string for durability on replica sets.
+- On Atlas, restrict access via **IP allowlist** or VPC peering; never `0.0.0.0/0` in production.
+- Set explicit reconnection and timeout behavior (`serverSelectionTimeoutMS`, `socketTimeoutMS`) to fail fast instead of hanging requests.
+- Use separate environment variables per environment (dev/staging/prod) for the connection URI; never share the same database across environments.
+
+## Security
+
+- Never interpolate user input directly into queries (`$where`, manually building filter objects from unsanitized query params) — risk of **NoSQL injection**. Validate/whitelist allowed operators.
+- Apply least privilege: DB users with roles scoped per service (bounded read/write), not a single shared admin user.
+- Enable **encryption at rest** (default on Atlas) and TLS on the connection (`tls=true` in the connection string).
+- Don't log full documents that may contain PII/credentials; sanitize query logs.
+
+## Performance and Operations
+
+- Monitor regularly with **Atlas Performance Advisor** / `explain()`, not only when there's an incident.
+- Define a **backup** strategy (point-in-time recovery on Atlas or scheduled `mongodump`) and test it by restoring periodically.
+- For very large collections needing horizontal scale, evaluate **sharding** with a shard key chosen for high cardinality and even write distribution (avoid monotonically increasing keys as the sole shard key).
+- Use `MongoDB Compass` or `mongosh` with `.explain()` in the local dev workflow before shipping a new query to production.

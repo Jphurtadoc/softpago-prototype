@@ -1,0 +1,143 @@
+---
+description: Frontend i18n conventions — hexagonal presentation colocation, namespaces, key naming, es/en parity, react-i18next usage
+globs: ["apps/web/**/i18n/**/*.{ts,tsx,json}", "apps/web/src/shared/i18n/**/*.{ts,tsx,json}", "apps/web/**/*.{tsx,ts}"]
+alwaysApply: false
+---
+
+# Frontend i18n (AWT)
+
+Stack: `i18next` + `react-i18next`. Locales: **`es`** (default) and **`en`**. Registry: `apps/web/src/shared/i18n/resources.ts`.
+
+## Hexagonal boundary (mandatory)
+
+| Layer | i18n allowed? |
+|-------|----------------|
+| `domain/` | **No** — no strings, no `t()`, no locale files |
+| `application/` | **No** — use-cases return codes/errors; UI maps to copy |
+| `adapters/` | **No** user-facing copy (map API errors to codes/keys at presentation) |
+| `presentation/` | **Yes** — only place for feature translation files and `useTranslation` |
+| `shared/components` / kit | **Yes** — only via `common` (or a dedicated shared namespace), not feature namespaces |
+
+UI copy lives at the edge. Domain speaks codes; presentation speaks language.
+
+## Where files live
+
+### Feature / page modules (default)
+
+Colocate under the **presentation** folder of the feature (or the parent page slice that owns the UI):
+
+```
+modules/<scope>/<feature>/presentation/i18n/
+  es.ts
+  en.ts
+  index.ts
+
+auth/presentation/<screen>/i18n/
+  es.ts
+  en.ts
+  index.ts
+```
+
+- One feature namespace → one `presentation/i18n` (or screen folders merged by a parent `presentation/i18n/index.ts`, like auth).
+- Shared copy **inside the same feature** (several screens): `presentation/shared/i18n/` then merge in `presentation/i18n/index.ts`.
+- Do **not** put feature strings in `shared/i18n/locales/` unless they are truly cross-app.
+
+### Cross-app / kit only
+
+`apps/web/src/shared/i18n/locales/` — `common`, and legacy shared buckets (`settings`, `onboarding`, `calendar`, …) until migrated next to their owners.
+
+- Kit primitives (`shared/components/UI`): prefer props for text **or** `common` keys — never import `comercial` / `auth` into the kit.
+- Storybook-only fixtures: `.storybook/i18n.ts` extras, **both** `es` and `en`.
+
+## File shape
+
+```ts
+// presentation/i18n/es.ts
+export const esFeature = {
+  pageTitle: '…',
+  saveDraft: '…',
+  emptyTitle: '…',
+} as const
+
+// presentation/i18n/en.ts
+export const enFeature = {
+  pageTitle: '…',
+  saveDraft: '…',
+  emptyTitle: '…',
+} as const
+
+// presentation/i18n/index.ts
+export { esFeature } from './es'
+export { enFeature } from './en'
+```
+
+- Export names: `es<Namespace>` / `en<Namespace>` (`esComercial`, `enAuth`, `esAuthLogin`).
+- Always `as const`.
+- **Same keys** in `es.ts` and `en.ts` — parity required in the same PR.
+- Prefer `.ts` objects (typed). JSON only if an existing locale already uses it (e.g. calendar); keep key style consistent.
+
+## Register namespace
+
+Every new feature namespace must be wired in `shared/i18n/resources.ts`:
+
+1. Import `esX` / `enX` from the feature `presentation/i18n`
+2. Add under `i18nResources.es` and `i18nResources.en`
+3. Append name to `i18nNamespaces`
+
+Namespace name: **camelCase**, short, matches feature (`comercial`, `auth`, `notFound`). One namespace per product area — do not explode into dozens of tiny namespaces without need.
+
+## Key naming
+
+- **camelCase** keys: `loginTitle`, `forcePasswordMismatch`, `mobilePaneActivity`
+- Structure by UI concern with prefixes when flat files grow:
+  - `…Title` / `…Subtitle` / `…Description`
+  - `…Placeholder` / `…Helper` / `…Label`
+  - `…Error` / `…Success` / `…Empty`
+  - `…Submit` / `…Cancel` (action-specific; reuse `common` for generic Save/Cancel when identical)
+- Nested objects OK for large screens (`form: { emailLabel: '…' }`) — access `t('form.emailLabel')`
+- **No** locale in the key (`titleEs` forbidden)
+- **No** component class names as keys (`AccountStepDrawerTitle` forbidden) — describe meaning, not file
+- Interpolation: i18next `{{name}}` — `t('forceOtpSubtitle', { email })`
+- Plurals: use i18next plural forms when counts matter (`key_one` / `key_other` or nested plural config) — do not concatenate words in JSX
+
+## Usage in components
+
+```tsx
+const { t } = useTranslation('comercial')
+const { t: tc } = useTranslation('common')
+
+return <h1>{t('accountInformation')}</h1>
+```
+
+- Pass the **namespace** to `useTranslation` — do not dump everything into `common`
+- Generic actions (`save`, `cancel`, `loading`, `delete`): `common`
+- Feature copy: feature namespace only
+- Never hard-code user-facing Spanish/English in JSX/TSX under `presentation/` or kit
+- `aria-label`, toast, empty/error CTAs: same rules (see `ux-writing`)
+- Do not call `t()` in `domain` / `application` / pure utils used by those layers
+
+## Errors and API messages
+
+- Backend/domain: stable **code** or error type
+- Presentation maps code → `t('…Error')`
+- Never show raw API/Mongo messages to the user
+
+## Anti-patterns
+
+- Translation files under `domain/`, `application/`, or random `src/locales` for features
+- Feature strings only in `shared/i18n/locales/` when a `presentation/` owner exists
+- Keys in only one locale
+- Hard-coded UI strings in components
+- Kit importing feature namespaces
+- `t(\`status.${x}\`)` dynamic keys without guaranteeing every `x` exists in both locales
+- Duplicating `common.save` inside every feature namespace
+
+## Checklist (new screen / feature copy)
+
+- [ ] Files under owning `presentation/i18n` (or `presentation/<screen>/i18n` + parent merge)
+- [ ] `es.ts` + `en.ts` + `index.ts` with identical keys
+- [ ] Namespace registered in `resources.ts` + `i18nNamespaces`
+- [ ] Components use `useTranslation('<namespace>')`
+- [ ] Shared actions from `common` where applicable
+- [ ] No i18n leakage into domain/application
+- [ ] Storybook: both toolbars `es`/`en` still work (see `storybook-ui-system`)

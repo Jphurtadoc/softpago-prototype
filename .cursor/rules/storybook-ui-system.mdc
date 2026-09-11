@@ -1,0 +1,168 @@
+---
+description: Document and maintain the AWT UI design system in Storybook — CSF3, autodocs, states, a11y, tokens, and kit construction rules
+globs: ["apps/web/**/*.stories.tsx", "apps/web/**/*.stories.ts", "apps/web/**/*.mdx", "apps/web/.storybook/**/*"]
+alwaysApply: false
+---
+
+# Storybook — AWT UI System Documentation
+
+Document the first-party design system so Storybook is the source of truth for `apps/web` UI. Align with skills `awt-dashboard-ui`, `ux-writing`, `dashboard-ui-review`, and `dashboard-ui-prototyping`.
+
+## Placement and naming
+
+- Colocate stories next to the component: `ComponentName.stories.tsx` beside `ComponentName.tsx`
+- **Components** = kit reutilizable (primitives + app chrome + domain blocks)
+- **Pages** = decisiones de diseño del producto (flujos compuestos, brand en contexto)
+- Kit primitives on disk: `apps/web/src/shared/components/UI/**`
+- Composites on disk: `Global/`, `sections/`, `preferences/` under `shared/components/`
+- Product flows on disk: `auth/presentation/**/*.stories.tsx`, `shared/components/brand/**`
+- Title hierarchy (must match `storySort` in `preview.tsx`):
+
+```
+Design System/Introducción
+Design System/Components/UI/<Component>
+Design System/Components/Global/<Name>
+Design System/Components/Sections/<Name>
+Design System/Components/Preferences/<Name>
+Design System/Pages/Auth/<Name>
+Design System/Pages/Brand/<Name>
+```
+
+- Folder on disk: kebab-case (`text-field/`). Story `title` segment: PascalCase component name
+- Export `index.ts` for every kit component; stories import from the local file or barrel consistently with neighbors
+
+## CSF3 meta (required)
+
+```tsx
+import type { Meta, StoryObj } from '@storybook/react-vite'
+import { Component } from './Component'
+
+const meta = {
+  title: 'Design System/Components/UI/Component',
+  component: Component,
+  tags: ['autodocs'],
+  parameters: {
+    layout: 'centered', // use 'padded' or 'fullscreen' for layout-heavy / shell components
+    controls: { expanded: true },
+  },
+  argTypes: {
+    // document every public visual prop with control + description
+  },
+} satisfies Meta<typeof Component>
+
+export default meta
+type Story = StoryObj<typeof meta>
+```
+
+Rules:
+
+- Prefer `satisfies Meta<typeof Component>` over loose `Meta`
+- `tags: ['autodocs']` on all kit primitives
+- Describe `argTypes` for variants, sizes, booleans, and slots — Controls + Docs become the API card
+- Do not hide important props from Controls unless they are callbacks (then `action` / disable control)
+- Default `args` must render a valid, accessible happy path
+
+## Story catalog (minimum set)
+
+Every kit component documents these stories when the state exists in the API:
+
+| Story | Purpose |
+|-------|---------|
+| `Default` / `Playground` | Happy path + full Controls |
+| Variant matrix | One story or grouped stories per `variant` / `size` |
+| `Loading` | Spinner/skeleton — panel-scoped, not fake full-app block |
+| `Empty` | Use kit `Empty` patterns; CTA copy via `ux-writing` |
+| `Error` / disabled / invalid | Failure and non-interactive states |
+| `Dense` / long content | Truncation, wrap, overflow (lived-in data) |
+| Icon-only / a11y edge | Prove `aria-label` and keyboard focus |
+
+Prototyping divergent layouts: follow `dashboard-ui-prototyping` — named stories (`Ops Dense`, `Master Detail`), then remix; do not leave abandoned WIP stories without `.wip` in the filename or explicit removal.
+
+## Design-system construction (from `awt-dashboard-ui`)
+
+- Stories must use theme tokens / Tailwind theme classes — no hard-coded hex in story JSX
+- Compose only existing kit primitives inside composite stories; do not invent one-off controls in Storybook that do not exist in `UI/`
+- Responsive: for layout components, add `parameters.viewport` or fullscreen stories at narrow width; flag horizontal overflow as a defect (`dashboard-ui-review`)
+
+## Light / dark mode (required)
+
+Wired in `.storybook/preview.tsx` + `decorators.tsx`:
+
+- Toolbar **Tema** → `globals.theme` (`light` | `dark`)
+- `withThemeClass` sets `document.documentElement` class + `data-theme`
+- `withPreferences` wraps `ThemeProvider` / `LocaleProvider` / `UiPreferencesProvider`
+- Global `backgrounds` disabled — surface comes from theme tokens, not Storybook bg picker
+
+Rules:
+
+- Components and stories use semantic tokens (`surface-*`, `text-*`, `brand-*`, borders) from `theme.css` — never `#fff` / `#000` / hard light-only greys
+- Verify every new story in **both** toolbar themes before merge (contrast, borders, hover, focus rings)
+- Dedicated `Dark` story only when behavior/layout diverges from light; otherwise toolbar is enough
+- Do not override root theme with local `className="dark"` / forced light wrappers inside stories
+- Charts/images/brand assets: check legibility on dark surfaces; invert or swap asset if needed
+- Fail review if a control disappears or loses contrast in one theme (`dashboard-ui-review`)
+
+## i18n / translations (required)
+
+Wired in `.storybook/i18n.ts` + toolbar **Idioma** (`es` | `en`):
+
+- `withLocale` syncs `i18next.changeLanguage` + `lang` on `<html>`
+- Resources: `@/shared/i18n/resources` plus Storybook extras in `.storybook/i18n.ts`
+
+Rules:
+
+- **Production components** that show UI copy use `useTranslation` / `t('key')` — no hard-coded user-facing Spanish/English in component source
+- Stories for i18n-aware components: render via `t()` or mount the real component so toolbar locale switches text; do not bake only one language into `args` when the component is translated
+- Stories for dumb/presentational props that take `title` / `label` strings: literals in `args` OK; document that product screens must pass translated strings
+- New Storybook-only demo strings (nav fixtures, etc.): add **both** `es` and `en` under `.storybook/i18n.ts` extras — never Spanish-only extras
+- New app strings: add keys to shared i18n resources for **es** and **en** in the same PR as the UI
+- Verify primary stories with toolbar `es` and `en` (truncation, layout grow, RTL not required unless product asks)
+- Empty/error CTA copy: follow `ux-writing`; keys must exist in both locales
+- `aria-label` and `title` tooltips that are user-facing follow the same i18n rules as visible text
+
+## Docs quality
+
+- Autodocs + meaningful prop `description`s; JSDoc on exported props interfaces so Docs picks them up
+- MDX only for overview / principles (`Introducción`), not for duplicating every prop table
+- One job per story: avoid mega-stories that bury the prop under review
+- Sample data: realistic and messy (long names, empty fields, many rows) — not `lorem` / `foo`
+- Actions: wire `onClick` / `onChange` with Storybook actions when useful for verification
+
+## Accessibility in Storybook
+
+- Addon a11y is enabled — fix violations before merging UI stories
+- Icon-only controls in stories must include accessible names
+- Do not disable a11y checks to “pass” CI; fix the component
+- Respect `prefers-reduced-motion` in any demo animation
+
+## Anti-patterns
+
+- Stories outside the `Design System/...` title tree for kit components
+- Snapshot-only stories with no Controls for public props
+- Duplicating production pages in **Components** instead of **Pages/Auth** (or the relevant Pages group)
+- Hard-coded light-only backgrounds that fight the theme decorator (`backgrounds: { disable: true }` is global — do not reintroduce conflicting backgrounds)
+- Hex colors or light-only greys that break in dark mode
+- Hard-coded UI strings in kit components that should go through i18n
+- Storybook extras / keys present in only one locale (`es` without `en` or reverse)
+- Shipping new `UI/` components without a colocated `*.stories.tsx`
+- Parallel “demo components” living only in Storybook
+
+## Checklist before merge
+
+- [ ] Colocated `*.stories.tsx` with correct `title`
+- [ ] `autodocs` + documented `argTypes`
+- [ ] Default + key variants + loading/empty/error when applicable
+- [ ] Toolbar **Tema**: light + dark OK (contrast, borders, focus)
+- [ ] Toolbar **Idioma**: `es` + `en` OK (copy, truncation, layout)
+- [ ] New strings in shared i18n (or SB extras) for both locales
+- [ ] a11y clean on primary stories
+- [ ] Tokens only; reuses kit; matches `awt-dashboard-ui`
+- [ ] Copy on empty/error CTAs reviewed with `ux-writing` when user-facing
+
+## Commands
+
+```bash
+# from apps/web
+yarn storybook
+yarn build-storybook
+```
