@@ -1,16 +1,16 @@
 .settings-page {
-  --settings-brand-primary: #063832;
-  --settings-brand-secondary: #caff05;
-  --settings-accent-glow: rgba(202, 255, 5, 0.18);
-  --settings-accent-soft: rgba(202, 255, 5, 0.1);
+  --settings-brand-primary: #1D4837;
+  --settings-brand-secondary: #D5F755;
+  --settings-accent-glow: rgba(213, 247, 85, 0.18);
+  --settings-accent-soft: rgba(213, 247, 85, 0.1);
   --settings-icon-inactive: #767c8c;
   --settings-item-hover-bg: linear-gradient(
     90deg,
-    rgba(202, 255, 5, 0.22) 0%,
-    rgba(202, 255, 5, 0.06) 55%,
+    rgba(213, 247, 85, 0.22) 0%,
+    rgba(213, 247, 85, 0.06) 55%,
     transparent 100%
   );
-  --settings-item-hover-glow: rgba(202, 255, 5, 0.28);
+  --settings-item-hover-glow: rgba(213, 247, 85, 0.28);
   --settings-item-hover-color: var(--settings-brand-secondary);
   --settings-shell-bg: color-mix(in srgb, #1a1b22 92%, transparent);
   --settings-shell-border: rgba(255, 255, 255, 0.08);
@@ -20,7 +20,7 @@
   --settings-text: #f1efe9;
   --settings-text-muted: #9ca3af;
   --settings-avatar-bg: #22242c;
-  --settings-avatar-color: #caff05;
+  --settings-avatar-color: #D5F755;
 
   width: 100%;
   max-width: none;
@@ -32,14 +32,14 @@
   --settings-icon-inactive: #6b7280;
   --settings-item-hover-bg: linear-gradient(
     90deg,
-    rgba(6, 56, 50, 0.18) 0%,
-    rgba(6, 56, 50, 0.06) 55%,
+    rgba(213, 247, 85, 0.28) 0%,
+    rgba(213, 247, 85, 0.08) 55%,
     transparent 100%
   );
-  --settings-item-hover-glow: rgba(6, 56, 50, 0.22);
+  --settings-item-hover-glow: rgba(29, 72, 55, 0.22);
   --settings-item-hover-color: var(--settings-brand-primary);
-  --settings-accent-glow: rgba(202, 255, 5, 0.16);
-  --settings-accent-soft: rgba(202, 255, 5, 0.14);
+  --settings-accent-glow: rgba(213, 247, 85, 0.22);
+  --settings-accent-soft: rgba(213, 247, 85, 0.16);
   --settings-shell-bg: rgba(255, 255, 255, 0.72);
   --settings-shell-border: rgba(20, 22, 26, 0.1);
   --settings-nav-border: rgba(20, 22, 26, 0.1);
@@ -48,7 +48,7 @@
   --settings-text: #1a1c20;
   --settings-text-muted: #6b7280;
   --settings-avatar-bg: #efece6;
-  --settings-avatar-color: #063832;
+  --settings-avatar-color: #1D4837;
 }
 
 .settings-shell {
@@ -338,13 +338,22 @@
   border-radius: 12px;
   font-size: 20px;
   color: var(--settings-brand-primary);
-  background: color-mix(in srgb, var(--settings-brand-secondary) 28%, transparent);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--settings-brand-secondary) 35%, transparent);
+  background: color-mix(
+    in srgb,
+    var(--settings-brand-secondary) 28%,
+    transparent
+  );
+  box-shadow: inset 0 0 0 1px
+    color-mix(in srgb, var(--settings-brand-secondary) 35%, transparent);
 }
 
 .settings-page[data-theme='dark'] .settings-icon {
   color: var(--settings-brand-secondary);
-  background: color-mix(in srgb, var(--settings-brand-secondary) 14%, transparent);
+  background: color-mix(
+    in srgb,
+    var(--settings-brand-secondary) 14%,
+    transparent
+  );
 }
 
 .settings-row {
@@ -403,7 +412,8 @@
   height: 64px;
   border-radius: 50%;
   overflow: hidden;
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--settings-brand-secondary) 35%, transparent);
+  box-shadow: 0 0 0 2px
+    color-mix(in srgb, var(--settings-brand-secondary) 35%, transparent);
 }
 
 .settings-account__avatar-fallback {
@@ -459,7 +469,8 @@
   height: 32px;
   border-radius: 50%;
   overflow: hidden;
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--settings-brand-secondary) 35%, transparent);
+  box-shadow: 0 0 0 2px
+    color-mix(in srgb, var(--settings-brand-secondary) 35%, transparent);
 }
 
 .settings-users__avatar-fallback {

@@ -1,30 +1,30 @@
 .sidebar {
-  --brand-primary: #063832;
-  --brand-secondary: #caff05;
+  --brand-primary: #1D4837;
+  --brand-secondary: #D5F755;
   --accent: var(--brand-secondary);
-  --accent-glow: rgba(202, 255, 5, 0.18);
-  --accent-soft: rgba(202, 255, 5, 0.1);
+  --accent-glow: rgba(213, 247, 85, 0.18);
+  --accent-soft: rgba(213, 247, 85, 0.1);
 
-  --sidebar-bg-top: #181a20;
-  --sidebar-bg-bottom: #101218;
-  --sidebar-border: rgba(255, 255, 255, 0.06);
-  --sidebar-shadow: 4px 0 32px rgba(0, 0, 0, 0.35);
+  --sidebar-bg-top: #1C1E24;
+  --sidebar-bg-bottom: #15171C;
+  --sidebar-border: rgba(255, 255, 255, 0.07);
+  --sidebar-shadow: 4px 0 32px rgba(0, 0, 0, 0.4);
   --sidebar-blur: 0px;
-  --icon-inactive: #767c8c;
-  --icon-hover: #e8e6e0;
-  --tooltip-bg: #22242c;
-  --toggle-bg: rgba(255, 255, 255, 0.04);
-  --toggle-bg-hover: rgba(255, 255, 255, 0.09);
-  --footer-border: rgba(255, 255, 255, 0.06);
+  --icon-inactive: #8B909A;
+  --icon-hover: #f1f1f3;
+  --tooltip-bg: #22252B;
+  --toggle-bg: rgba(255, 255, 255, 0.05);
+  --toggle-bg-hover: rgba(255, 255, 255, 0.1);
+  --footer-border: rgba(255, 255, 255, 0.07);
   --item-hover-bg: linear-gradient(
     90deg,
-    rgba(202, 255, 5, 0.22) 0%,
-    rgba(202, 255, 5, 0.06) 55%,
+    rgba(213, 247, 85, 0.16) 0%,
+    rgba(213, 247, 85, 0.04) 55%,
     transparent 100%
   );
-  --item-hover-glow: rgba(202, 255, 5, 0.28);
+  --item-hover-glow: rgba(213, 247, 85, 0.2);
   --item-hover-color: var(--brand-secondary);
-  --menu-bg: #1a1c22;
+  --menu-bg: #22252B;
   --menu-border: rgba(255, 255, 255, 0.08);
 
   --collapsed-width: 80px;
@@ -58,29 +58,29 @@
 }
 
 .sidebar[data-theme='light'] {
-  --sidebar-bg-top: #f7f5f1;
-  --sidebar-bg-bottom: #efece6;
-  --sidebar-border: rgba(20, 22, 26, 0.10);
-  --sidebar-shadow: 6px 0 40px rgba(20, 22, 26, 0.14);
+  --sidebar-bg-top: #F7F7F8;
+  --sidebar-bg-bottom: #EEEEF0;
+  --sidebar-border: rgba(20, 22, 26, 0.1);
+  --sidebar-shadow: 6px 0 40px rgba(20, 22, 26, 0.1);
   --sidebar-blur: 0px;
-  --accent-soft: rgba(202, 255, 5, 0.14);
-  --accent-glow: rgba(202, 255, 5, 0.16);
+  --accent-soft: rgba(213, 247, 85, 0.22);
+  --accent-glow: rgba(213, 247, 85, 0.28);
   --icon-inactive: #6b7280;
   --icon-hover: var(--brand-primary);
-  --tooltip-bg: #14161a;
+  --tooltip-bg: #1A1C20;
   --toggle-bg: rgba(20, 22, 26, 0.05);
-  --toggle-bg-hover: rgba(20, 22, 26, 0.10);
-  --footer-border: rgba(20, 22, 26, 0.10);
+  --toggle-bg-hover: rgba(20, 22, 26, 0.1);
+  --footer-border: rgba(20, 22, 26, 0.1);
   --item-hover-bg: linear-gradient(
     90deg,
-    rgba(6, 56, 50, 0.18) 0%,
-    rgba(6, 56, 50, 0.06) 55%,
+    rgba(213, 247, 85, 0.32) 0%,
+    rgba(213, 247, 85, 0.08) 55%,
     transparent 100%
   );
-  --item-hover-glow: rgba(6, 56, 50, 0.22);
+  --item-hover-glow: rgba(20, 22, 26, 0.12);
   --item-hover-color: var(--brand-primary);
   --menu-bg: #ffffff;
-  --menu-border: rgba(20, 22, 26, 0.10);
+  --menu-border: rgba(20, 22, 26, 0.1);
 }
 
 .sidebar--expanded {
@@ -211,7 +211,7 @@
   height: 100%;
   border-radius: 50%;
   background: var(--brand-secondary);
-  color: #063832;
+  color: #1D4837;
   font-size: 15px;
   font-weight: 700;
 }
@@ -508,7 +508,7 @@
 }
 
 .sidebar__theme-segment-btn--active {
-  color: #063832;
+  color: #1D4837;
 }
 
 .sidebar__theme-segment-btn:hover {
@@ -516,7 +516,7 @@
 }
 
 .sidebar__theme-segment-btn--active:hover {
-  color: #063832;
+  color: #1D4837;
 }
 
 .sidebar__pin {

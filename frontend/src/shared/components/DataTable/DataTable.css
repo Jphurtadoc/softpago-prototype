@@ -11,8 +11,8 @@
 }
 
 .data-table {
-  --dt-brand: #063832;
-  --dt-lime: #caff05;
+  --dt-brand: #1D4837;
+  --dt-lime: #D5F755;
   --dt-surface: #ffffff;
   --dt-surface-muted: #f3f4f1;
   --dt-surface-hover: rgba(20, 22, 26, 0.04);
@@ -21,20 +21,20 @@
   --dt-border: rgba(20, 22, 26, 0.08);
   --dt-shadow: 0 12px 40px rgba(20, 22, 26, 0.08);
   --dt-focus: color-mix(in srgb, var(--dt-brand) 35%, transparent);
-  --dt-accent: var(--dt-brand);
-  --dt-accent-ink: #f7f5f1;
+  --dt-accent: var(--dt-lime);
+  --dt-accent-ink: #1D4837;
   --dt-danger: #dc2626;
   --dt-danger-bg: color-mix(in srgb, #dc2626 10%, transparent);
   --dt-radius: 16px;
   --dt-radius-sm: 10px;
-  --dt-row-selected: color-mix(in srgb, var(--dt-brand) 8%, transparent);
+  --dt-row-selected: color-mix(in srgb, var(--dt-lime) 12%, transparent);
   --dt-menu-shadow: 0 16px 40px rgba(20, 22, 26, 0.16);
-  --dt-tab-active-bg: color-mix(in srgb, var(--dt-brand) 10%, #eef2ef);
+  --dt-tab-active-bg: color-mix(in srgb, var(--dt-lime) 18%, #eef2ef);
   --dt-tab-active-fg: var(--dt-brand);
   --dt-tone-neutral-fg: #4b5563;
   --dt-tone-neutral-bg: rgba(20, 22, 26, 0.06);
-  --dt-tone-brand-fg: #063832;
-  --dt-tone-brand-bg: color-mix(in srgb, #063832 12%, #eef2ef);
+  --dt-tone-brand-fg: #1D4837;
+  --dt-tone-brand-bg: color-mix(in srgb, #1D4837 12%, #eef2ef);
   --dt-tone-success-fg: #15803d;
   --dt-tone-success-bg: color-mix(in srgb, #16a34a 16%, #ecfdf3);
   --dt-tone-warning-fg: #b45309;
@@ -54,34 +54,34 @@
 
 .app[data-theme='dark'] .data-table:not([data-theme='light']),
 .data-table[data-theme='dark'] {
-  --dt-surface: #15171c;
-  --dt-surface-muted: #1e2128;
-  --dt-surface-hover: rgba(255, 255, 255, 0.04);
+  --dt-surface: #1A1C20;
+  --dt-surface-muted: #22252B;
+  --dt-surface-hover: rgba(213, 247, 85, 0.06);
   --dt-text: #f4f2ec;
   --dt-text-muted: #a1a7b3;
   --dt-border: rgba(255, 255, 255, 0.07);
   --dt-shadow: 0 18px 48px rgba(0, 0, 0, 0.45);
   --dt-focus: color-mix(in srgb, var(--dt-lime) 40%, transparent);
   --dt-accent: var(--dt-lime);
-  --dt-accent-ink: #063832;
+  --dt-accent-ink: #1D4837;
   --dt-danger: #f87171;
   --dt-danger-bg: color-mix(in srgb, #f87171 14%, transparent);
   --dt-row-selected: color-mix(in srgb, var(--dt-lime) 12%, transparent);
   --dt-menu-shadow: 0 20px 48px rgba(0, 0, 0, 0.55);
-  --dt-tab-active-bg: color-mix(in srgb, var(--dt-lime) 16%, #1e2128);
+  --dt-tab-active-bg: color-mix(in srgb, var(--dt-lime) 16%, #22252B);
   --dt-tab-active-fg: var(--dt-lime);
   --dt-tone-neutral-fg: #c4c9d4;
-  --dt-tone-neutral-bg: rgba(255, 255, 255, 0.08);
+  --dt-tone-neutral-bg: rgba(245, 246, 244, 0.08);
   --dt-tone-brand-fg: var(--dt-lime);
-  --dt-tone-brand-bg: color-mix(in srgb, var(--dt-lime) 16%, #1e2128);
+  --dt-tone-brand-bg: color-mix(in srgb, var(--dt-lime) 16%, #22252B);
   --dt-tone-success-fg: #4ade80;
-  --dt-tone-success-bg: color-mix(in srgb, #4ade80 18%, #15171c);
+  --dt-tone-success-bg: color-mix(in srgb, #4ade80 18%, #1A1C20);
   --dt-tone-warning-fg: #fbbf24;
-  --dt-tone-warning-bg: color-mix(in srgb, #f59e0b 18%, #1e2128);
+  --dt-tone-warning-bg: color-mix(in srgb, #f59e0b 18%, #22252B);
   --dt-tone-danger-fg: #f87171;
-  --dt-tone-danger-bg: color-mix(in srgb, #f87171 16%, #15171c);
+  --dt-tone-danger-bg: color-mix(in srgb, #f87171 16%, #1A1C20);
   --dt-tone-info-fg: #93c5fd;
-  --dt-tone-info-bg: color-mix(in srgb, #3b82f6 18%, #15171c);
+  --dt-tone-info-bg: color-mix(in srgb, #3b82f6 18%, #1A1C20);
 }
 
 .data-table__toolbar {
@@ -120,7 +120,9 @@
   font: inherit;
   font-size: 14px;
   outline: none;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 .data-table__search-input::placeholder {
@@ -150,7 +152,9 @@
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.15s ease, border-color 0.15s ease;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
 }
 
 .data-table__filter-btn:hover,
@@ -278,7 +282,8 @@
   transition: transform 0.18s ease;
 }
 
-.data-table__accordion-trigger[aria-expanded='true'] .data-table__accordion-chevron {
+.data-table__accordion-trigger[aria-expanded='true']
+  .data-table__accordion-chevron {
   transform: rotate(180deg);
 }
 
@@ -344,7 +349,9 @@
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.15s ease, color 0.15s ease;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
 }
 
 .data-table__tab--brand {
@@ -567,7 +574,9 @@
   background: transparent;
   color: var(--dt-text-muted);
   cursor: pointer;
-  transition: background 0.15s ease, color 0.15s ease;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
 }
 
 .data-table__actions-btn:hover,
@@ -806,7 +815,8 @@
     left: 0;
     z-index: 2;
     background: var(--dt-surface);
-    box-shadow: 2px 0 6px -2px color-mix(in srgb, var(--dt-text) 18%, transparent);
+    box-shadow: 2px 0 6px -2px
+      color-mix(in srgb, var(--dt-text) 18%, transparent);
   }
 
   .data-table__grid thead .data-table__cell--check {

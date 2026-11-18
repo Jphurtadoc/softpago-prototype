@@ -621,9 +621,7 @@ export function HomePage() {
             className="overview-card overview-card--lime overview-card--balance"
             aria-labelledby="balance-title"
           >
-            <img
-              src="/favicon.svg"
-              alt=""
+            <div
               className="overview-card__watermark"
               aria-hidden
             />

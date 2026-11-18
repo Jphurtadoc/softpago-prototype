@@ -41,9 +41,7 @@ import SidebarBehaviorToggle from '@/shared/components/SidebarBehaviorToggle/Sid
 import { useColorMode } from '@/shared/themes/color-mode-context'
 import './SettingsPage.css'
 
-const SETTINGS_TABS = ['general', 'cuenta', 'seguridad', 'usuarios'] as const
-
-type SettingsTab = (typeof SETTINGS_TABS)[number]
+type SettingsTab = 'general' | 'cuenta' | 'seguridad' | 'usuarios'
 
 const MIN_PASSWORD_LENGTH = 8
 const NAV_ITEM_SIZE = 46

@@ -27,21 +27,21 @@ export interface AuthLayoutProps {
 
 /** Dashboard `.app` ambient mesh — same layers as App.css (secondary lime). */
 const DASHBOARD_MESH_DOT_LIGHT =
-  'radial-gradient(circle, rgba(20, 22, 26, 0.05) 1px, transparent 1px)'
+  'radial-gradient(circle, rgba(20, 22, 26, 0.05) 1px, transparent 1px)';
 const DASHBOARD_MESH_DOT_DARK =
-  'radial-gradient(circle, rgba(241, 239, 233, 0.04) 1px, transparent 1px)'
+  'radial-gradient(circle, rgba(241, 239, 233, 0.04) 1px, transparent 1px)';
 
 const dashboardLightBackgroundImage = [
   'radial-gradient(ellipse 620px 480px at 14% 16%, rgba(202, 255, 5, 0.14), transparent 60%)',
   'radial-gradient(ellipse 620px 520px at 88% 84%, rgba(202, 255, 5, 0.11), transparent 60%)',
   DASHBOARD_MESH_DOT_LIGHT,
-].join(', ')
+].join(', ');
 
 const dashboardDarkBackgroundImage = [
   'radial-gradient(ellipse 620px 480px at 14% 16%, rgba(202, 255, 5, 0.08), transparent 60%)',
   'radial-gradient(ellipse 620px 520px at 88% 84%, rgba(202, 255, 5, 0.06), transparent 60%)',
   DASHBOARD_MESH_DOT_DARK,
-].join(', ')
+].join(', ');
 
 function AuthLayout({
   title,

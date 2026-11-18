@@ -1,10 +1,10 @@
 .overview {
-  --ov-brand: #063832;
-  --ov-lime: #caff05;
-  --ov-lime-soft: color-mix(in srgb, var(--ov-lime) 72%, white);
-  --ov-lime-ink: #063832;
+  --ov-brand: #1D4837;
+  --ov-lime: #D5F755;
+  --ov-lime-soft: color-mix(in srgb, var(--ov-lime) 55%, white);
+  --ov-lime-ink: #1D4837;
   --ov-surface: #ffffff;
-  --ov-surface-muted: #f3f4f1;
+  --ov-surface-muted: #EEEEF0;
   --ov-text: #14161a;
   --ov-text-muted: #6b7280;
   --ov-border: rgba(20, 22, 26, 0.08);
@@ -16,14 +16,14 @@
   --ov-track: rgba(20, 22, 26, 0.08);
   --ov-bar: #d4d4d8;
   --ov-bar-accent: var(--ov-lime);
-  --ov-btn-dark: #063832;
-  --ov-btn-dark-text: #f7f5f1;
+  --ov-btn-dark: #1D4837;
+  --ov-btn-dark-text: #F5F6F4;
   --ov-icon-btn: rgba(20, 22, 26, 0.06);
-  --ov-quick-ok: #caff05;
-  --ov-quick-ok-ink: #063832;
+  --ov-quick-ok: #D5F755;
+  --ov-quick-ok-ink: #1D4837;
   --ov-quick-no: #e8e8ea;
   --ov-quick-no-ink: #4b5563;
-  --ov-avatar-bg: color-mix(in srgb, var(--ov-brand) 10%, #eef2ef);
+  --ov-avatar-bg: color-mix(in srgb, var(--ov-brand) 10%, #EEF0EC);
   --ov-avatar-fg: var(--ov-brand);
   --ov-alert-bg: color-mix(in srgb, #f59e0b 16%, #fff7ed);
   --ov-alert-fg: #d97706;
@@ -42,27 +42,27 @@
 }
 
 .app[data-theme='dark'] .overview {
-  --ov-surface: #15171c;
-  --ov-surface-muted: #1e2128;
-  --ov-text: #f4f2ec;
+  --ov-surface: #1A1C20;
+  --ov-surface-muted: #22252B;
+  --ov-text: #f1f1f3;
   --ov-text-muted: #a1a7b3;
   --ov-border: rgba(255, 255, 255, 0.07);
   --ov-shadow: 0 18px 48px rgba(0, 0, 0, 0.45);
   --ov-track: rgba(255, 255, 255, 0.08);
   --ov-bar: #353842;
-  --ov-btn-dark: #caff05;
-  --ov-btn-dark-text: #063832;
+  --ov-btn-dark: #275C46;
+  --ov-btn-dark-text: #F5F6F4;
   --ov-icon-btn: rgba(255, 255, 255, 0.07);
-  --ov-quick-no: #2c3039;
+  --ov-quick-no: #2C3039;
   --ov-quick-no-ink: #d0d4dc;
-  --ov-lime-soft: color-mix(in srgb, var(--ov-lime) 38%, #15171c);
+  --ov-lime-soft: color-mix(in srgb, var(--ov-lime) 38%, #1A1C20);
   --ov-positive: #4ade80;
   --ov-negative: #f87171;
-  --ov-avatar-bg: color-mix(in srgb, var(--ov-lime) 16%, #1e2128);
+  --ov-avatar-bg: color-mix(in srgb, var(--ov-brand) 16%, #1A1C20);
   --ov-avatar-fg: var(--ov-lime);
-  --ov-alert-bg: color-mix(in srgb, #f59e0b 18%, #1e2128);
+  --ov-alert-bg: color-mix(in srgb, #f59e0b 18%, #22252B);
   --ov-alert-fg: #fbbf24;
-  --ov-chart-line: var(--ov-lime);
+  --ov-chart-line: #D5F755;
 }
 
 .overview__header {
@@ -368,7 +368,9 @@
   border: 1px solid var(--ov-border);
   overflow: hidden;
   min-height: 0;
-  transition: transform 0.22s ease, box-shadow 0.22s ease;
+  transition:
+    transform 0.22s ease,
+    box-shadow 0.22s ease;
 }
 
 .overview-card--kpi {
@@ -430,11 +432,25 @@
   right: -28px;
   bottom: -36px;
   width: clamp(200px, 58%, 280px);
-  height: auto;
-  opacity: 0.1;
+  aspect-ratio: 131 / 151;
   pointer-events: none;
   user-select: none;
   z-index: 0;
+  background-color: var(--ov-lime);
+  opacity: 0.22;
+  -webkit-mask-image: url('/favicon.svg');
+  mask-image: url('/favicon.svg');
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+}
+
+.overview-card--lime .overview-card__watermark {
+  background-color: var(--ov-lime);
+  opacity: 0.2;
 }
 
 .overview-card__body--balance {
@@ -464,9 +480,16 @@
 }
 
 .overview-card--lime {
-  background: var(--ov-lime);
+  /* Dark surface banner; lime reserved for CTAs / active chips. */
+  --ov-banner-ink: #f5f6f4;
+  --ov-banner-muted: color-mix(in srgb, #f5f6f4 68%, transparent);
+  background: var(--ov-brand);
   border-color: transparent;
-  color: var(--ov-lime-ink);
+  color: var(--ov-banner-ink);
+}
+
+.app[data-theme='dark'] .overview-card--lime {
+  background: #142E24;
 }
 
 .overview-card__metric-stack {
@@ -487,7 +510,7 @@
   min-height: 1.25rem;
   font-size: 0.78rem;
   line-height: 1.2;
-  color: color-mix(in srgb, var(--ov-lime-ink) 68%, transparent);
+  color: var(--ov-banner-muted, color-mix(in srgb, var(--ov-lime-ink) 68%, transparent));
 }
 
 .overview-balance-sub--placeholder {
@@ -501,7 +524,7 @@
 .overview-balance-sub__value {
   font-weight: 700;
   letter-spacing: -0.02em;
-  color: var(--ov-lime-ink);
+  color: var(--ov-banner-ink, var(--ov-lime-ink));
 }
 
 .overview-balance-sub__sep {
@@ -533,8 +556,8 @@
   padding: 0 10px;
   border: 1.5px solid transparent;
   border-radius: 999px;
-  background: color-mix(in srgb, var(--ov-lime-ink) 10%, transparent);
-  color: var(--ov-lime-ink);
+  background: color-mix(in srgb, #f5f6f4 12%, transparent);
+  color: var(--ov-banner-ink, var(--ov-lime-ink));
   font: inherit;
   font-size: 0.72rem;
   font-weight: 700;
@@ -561,26 +584,26 @@
 }
 
 .overview-balance-tab:hover {
-  background: color-mix(in srgb, var(--ov-lime-ink) 16%, transparent);
+  background: color-mix(in srgb, #f5f6f4 18%, transparent);
 }
 
 .overview-balance-tab--active {
-  background: var(--ov-brand);
+  background: var(--ov-lime);
   border-color: transparent;
-  color: var(--ov-lime);
+  color: var(--ov-lime-ink);
   box-shadow: none;
 }
 
 .overview-balance-tab--active .overview-balance-tab__glyph,
 .overview-balance-tab--active .overview-balance-tab__label {
-  color: var(--ov-lime);
+  color: var(--ov-lime-ink);
 }
 
 .overview-balance-tab--active:hover {
-  background: var(--ov-brand);
+  background: var(--ov-lime);
   border-color: transparent;
-  color: var(--ov-lime);
-  filter: brightness(1.06);
+  color: var(--ov-lime-ink);
+  filter: brightness(1.04);
 }
 
 .overview-balance-tab:focus-visible {
@@ -589,7 +612,7 @@
 }
 
 .overview-balance-tab--active:focus-visible {
-  outline-color: var(--ov-lime);
+  outline-color: #f5f6f4;
 }
 
 .overview-collection {
@@ -621,7 +644,7 @@
   margin: 0 0 4px;
   font-size: 0.72rem;
   font-weight: 600;
-  color: color-mix(in srgb, var(--ov-lime-ink) 72%, transparent);
+  color: var(--ov-banner-muted, color-mix(in srgb, var(--ov-lime-ink) 72%, transparent));
   line-height: 1.2;
 }
 
@@ -629,7 +652,7 @@
   width: 100%;
   height: 10px;
   border-radius: 999px;
-  background: color-mix(in srgb, var(--ov-lime-ink) 14%, transparent);
+  background: color-mix(in srgb, #f5f6f4 16%, transparent);
   overflow: hidden;
 }
 
@@ -637,7 +660,7 @@
   display: block;
   height: 100%;
   border-radius: inherit;
-  background: var(--ov-lime-ink);
+  background: var(--ov-lime);
   transition: width 0.28s ease;
 }
 
@@ -646,7 +669,7 @@
   font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: -0.02em;
-  color: var(--ov-lime-ink);
+  color: var(--ov-banner-ink, var(--ov-lime-ink));
 }
 
 .overview-collection__track--masked {
@@ -779,8 +802,8 @@
 }
 
 .overview-card--lime .overview-card__title-icon {
-  background: color-mix(in srgb, white 40%, transparent);
-  color: var(--ov-lime-ink);
+  background: color-mix(in srgb, var(--ov-lime) 22%, transparent);
+  color: var(--ov-lime);
 }
 
 .overview-card__title-text {
@@ -793,7 +816,7 @@
 }
 
 .overview-card--lime .overview-card__title-text {
-  color: var(--ov-lime-ink);
+  color: var(--ov-banner-ink);
 }
 
 .overview-card__amount-row {
@@ -857,11 +880,11 @@
 }
 
 .overview-card--lime .overview-money__amount {
-  color: var(--ov-lime-ink);
+  color: var(--ov-banner-ink);
 }
 
 .overview-card--lime .overview-money__currency {
-  color: color-mix(in srgb, var(--ov-lime-ink) 55%, transparent);
+  color: var(--ov-banner-muted);
 }
 
 .overview-icon-btn {
@@ -876,7 +899,9 @@
   background: var(--ov-icon-btn);
   color: var(--ov-text);
   cursor: pointer;
-  transition: background 0.18s ease, transform 0.18s ease;
+  transition:
+    background 0.18s ease,
+    transform 0.18s ease;
   align-self: center;
 }
 
@@ -890,7 +915,7 @@
 }
 
 .overview-card--lime .overview-icon-btn {
-  background: color-mix(in srgb, white 35%, transparent);
+  background: var(--ov-lime);
   color: var(--ov-lime-ink);
 }
 
@@ -900,7 +925,7 @@
 }
 
 .overview-card--lime .overview-icon-btn--arrow:hover {
-  background: color-mix(in srgb, white 55%, transparent);
+  background: color-mix(in srgb, var(--ov-lime) 88%, white);
   transform: translateY(-1px);
 }
 
@@ -944,7 +969,10 @@
   font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+  transition:
+    background 0.18s ease,
+    color 0.18s ease,
+    border-color 0.18s ease;
 }
 
 .overview-btn--primary {
@@ -952,8 +980,22 @@
   color: var(--ov-btn-dark-text);
 }
 
+.overview-card--lime .overview-btn--primary {
+  background: var(--ov-lime);
+  color: var(--ov-lime-ink);
+}
+
 .overview-btn--primary:hover {
   filter: brightness(1.08);
+}
+
+.overview-card--lime .overview-btn--ghost {
+  border-color: color-mix(in srgb, #f5f6f4 28%, transparent);
+  color: var(--ov-banner-ink);
+}
+
+.overview-card--lime .overview-btn--ghost:hover {
+  background: color-mix(in srgb, #f5f6f4 12%, transparent);
 }
 
 .overview-btn--ghost {
@@ -1034,9 +1076,9 @@
   height: 30px;
   min-width: 30px;
   align-self: center;
-  background: color-mix(in srgb, white 18%, transparent);
+  background: var(--ov-lime);
   color: var(--ov-lime-ink);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ov-lime-ink) 18%, transparent);
+  box-shadow: none;
   transition:
     background 0.22s ease,
     color 0.22s ease,
@@ -1045,9 +1087,9 @@
 }
 
 .overview-card--lime .overview-nested__eye:hover {
-  background: color-mix(in srgb, white 28%, transparent);
+  background: color-mix(in srgb, var(--ov-lime) 88%, white);
   color: var(--ov-lime-ink);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ov-lime-ink) 26%, transparent);
+  box-shadow: none;
   transform: translateY(-1px);
 }
 
@@ -1056,15 +1098,17 @@
 }
 
 .overview-card--lime .overview-nested__eye--hidden {
-  background: color-mix(in srgb, var(--ov-lime-ink) 14%, transparent);
-  color: var(--ov-lime-ink);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ov-lime-ink) 28%, transparent);
+  background: color-mix(in srgb, #f5f6f4 14%, transparent);
+  color: var(--ov-banner-ink);
+  box-shadow: inset 0 0 0 1px
+    color-mix(in srgb, #f5f6f4 28%, transparent);
 }
 
 .overview-card--lime .overview-nested__eye--hidden:hover {
-  background: color-mix(in srgb, var(--ov-lime-ink) 22%, transparent);
-  color: var(--ov-lime-ink);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ov-lime-ink) 38%, transparent);
+  background: color-mix(in srgb, #f5f6f4 22%, transparent);
+  color: var(--ov-banner-ink);
+  box-shadow: inset 0 0 0 1px
+    color-mix(in srgb, #f5f6f4 38%, transparent);
 }
 
 .overview-actions {
@@ -1094,7 +1138,10 @@
   font-weight: 600;
   text-align: left;
   cursor: pointer;
-  transition: background 0.16s ease, border-color 0.16s ease, transform 0.16s ease;
+  transition:
+    background 0.16s ease,
+    border-color 0.16s ease,
+    transform 0.16s ease;
 }
 
 .overview-actions__btn:hover {
@@ -1366,7 +1413,9 @@
   opacity: 0;
   pointer-events: none;
   transform: translateY(-50%) translateX(4px);
-  transition: opacity 0.16s ease, transform 0.16s ease;
+  transition:
+    opacity 0.16s ease,
+    transform 0.16s ease;
 }
 
 .overview-alert__item:hover .overview-alert__actions,

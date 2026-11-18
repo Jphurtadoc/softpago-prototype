@@ -96,15 +96,16 @@ export default function RoutesPage() {
 
   useEffect(() => {
     const handle = window.setTimeout(() => {
-      setSearch(searchInput.trim())
+      const nextSearch = searchInput.trim()
+      if (nextSearch === search) {
+        return
+      }
+      setSearch(nextSearch)
+      setPage(1)
+      setSelectedKeys([])
     }, 300)
     return () => window.clearTimeout(handle)
-  }, [searchInput])
-
-  useEffect(() => {
-    setPage(1)
-    setSelectedKeys([])
-  }, [search])
+  }, [search, searchInput])
 
   useEffect(() => {
     let cancelled = false

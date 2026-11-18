@@ -20,7 +20,7 @@ export interface DocumentTitleHandle {
 /**
  * Builds the document title for a named page, or the marketing default.
  */
-export function buildDocumentTitle(pageName: string | undefined): string {
+function buildDocumentTitle(pageName: string | undefined): string {
   if (!pageName) {
     return DEFAULT_DOCUMENT_TITLE
   }
@@ -59,7 +59,7 @@ export function DocumentTitleOutlet() {
     }
     const pageName = t(titleKey, { ns: handle.documentTitleNs })
     document.title = buildDocumentTitle(pageName)
-  }, [matches, t, i18n.language])
+  }, [matches, t, i18n])
 
   return <Outlet />
 }

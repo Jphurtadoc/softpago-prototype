@@ -22,7 +22,7 @@ const meta: Meta<typeof Navbar> = {
     docs: {
       description: {
         component:
-          'Sidebar that expands on hover and collapses when the pointer leaves (icon-only ↔ icons + text). ' +
+          'Sidebar that expands on hover and collapses when the pointer leaves (icon-only â†” icons + text). ' +
           'A pin button locks it open. Includes a floating active indicator with glow, tooltips in collapsed ' +
           'mode, and a user menu (settings, theme segment, logout) from the avatar / more button.',
       },
@@ -102,7 +102,7 @@ type Story = StoryObj<typeof Navbar>;
 
 export const Collapsed: Story = {
   render: (args) => (
-    <div style={{ height: '100vh', background: '#0d0e12' }}>
+    <div style={{ height: '100vh', background: '#0A1424' }}>
       <Navbar {...args} />
     </div>
   ),
@@ -113,7 +113,7 @@ export const Expanded: Story = {
     defaultExpanded: true,
   },
   render: (args) => (
-    <div style={{ height: '100vh', background: '#0d0e12' }}>
+    <div style={{ height: '100vh', background: '#0A1424' }}>
       <Navbar {...args} />
     </div>
   ),
@@ -125,7 +125,7 @@ export const LightTheme: Story = {
     defaultExpanded: true,
   },
   render: (args) => (
-    <div style={{ height: '100vh', background: '#f7f5f1' }}>
+    <div style={{ height: '100vh', background: '#F4F7FB' }}>
       <Navbar {...args} />
     </div>
   ),
@@ -137,7 +137,7 @@ export const PaymentsActive: Story = {
     defaultExpanded: true,
   },
   render: (args) => (
-    <div style={{ height: '100vh', background: '#0d0e12' }}>
+    <div style={{ height: '100vh', background: '#0A1424' }}>
       <Navbar {...args} />
     </div>
   ),
@@ -145,20 +145,20 @@ export const PaymentsActive: Story = {
 
 /**
  * Interaction test: hovering over the sidebar expands it, and moving the
- * pointer away collapses it back — the gesture requested for the real app.
+ * pointer away collapses it back â€” the gesture requested for the real app.
  */
 export const HoverToExpand: Story = {
   args: {
     defaultExpanded: false,
   },
   render: (args) => (
-    <div style={{ height: '100vh', background: '#0d0e12' }}>
+    <div style={{ height: '100vh', background: '#0A1424' }}>
       <Navbar {...args} />
     </div>
   ),
   play: async ({ args, canvasElement, step }) => {
     const canvas = within(canvasElement);
-    const sidebar = canvas.getByLabelText('Navegación principal');
+    const sidebar = canvas.getByLabelText('NavegaciÃ³n principal');
 
     await step('Hover expands the sidebar', async () => {
       await userEvent.hover(sidebar);
@@ -182,14 +182,14 @@ export const HoverToExpand: Story = {
  */
 export const PinToKeepOpen: Story = {
   render: (args) => (
-    <div style={{ height: '100vh', background: '#0d0e12' }}>
+    <div style={{ height: '100vh', background: '#0A1424' }}>
       <Navbar {...args} />
     </div>
   ),
   play: async ({ args, canvasElement }) => {
     const canvas = within(canvasElement);
-    const sidebar = canvas.getByLabelText('Navegación principal');
-    const pinButton = canvas.getByRole('button', { name: 'Anclar menú abierto' });
+    const sidebar = canvas.getByLabelText('NavegaciÃ³n principal');
+    const pinButton = canvas.getByRole('button', { name: 'Anclar menÃº abierto' });
 
     await userEvent.hover(sidebar);
     await userEvent.click(pinButton);
@@ -208,13 +208,13 @@ export const ToggleTheme: Story = {
     defaultExpanded: true,
   },
   render: (args) => (
-    <div style={{ height: '100vh', background: '#0d0e12' }}>
+    <div style={{ height: '100vh', background: '#0A1424' }}>
       <Navbar {...args} />
     </div>
   ),
   play: async ({ args, canvasElement }) => {
     const canvas = within(canvasElement);
-    const moreButton = canvas.getByRole('button', { name: 'Menú de usuario' });
+    const moreButton = canvas.getByRole('button', { name: 'MenÃº de usuario' });
 
     await userEvent.click(moreButton);
     const lightModeButton = canvas.getByRole('button', { name: 'Modo claro' });
@@ -245,7 +245,7 @@ function ControlledNavbar() {
     <div
       style={{
         height: '100vh',
-        background: resolvedTheme === 'dark' ? '#0d0e12' : '#f7f5f1',
+        background: resolvedTheme === 'dark' ? '#0A1424' : '#F4F7FB',
         transition: 'background 0.3s ease',
       }}
     >

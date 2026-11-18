@@ -1,16 +1,18 @@
-import { createElement } from 'react'
-import CheckIcon from '@mui/icons-material/Check'
-import { createTheme, alpha, type Theme } from '@mui/material/styles'
-import { AUTH_BRAND_TOKENS } from './auth-brand-tokens'
+import { createElement } from 'react';
+import CheckIcon from '@mui/icons-material/Check';
+import { createTheme, alpha, type Theme } from '@mui/material/styles';
+import { AUTH_BRAND_TOKENS } from './auth-brand-tokens';
 
-const CHECKBOX_SIZE_PX = 22
-const CHECKBOX_BORDER_RADIUS_PX = 7
-const CHECKBOX_CHECK_ICON_SIZE_PX = 16
+const CHECKBOX_SIZE_PX = 22;
+const CHECKBOX_BORDER_RADIUS_PX = 7;
+const CHECKBOX_CHECK_ICON_SIZE_PX = 16;
 
-export type AuthPaletteMode = 'light' | 'dark'
+export type AuthPaletteMode = 'light' | 'dark';
 
 /**
  * Builds the auth MUI theme for light or dark using {@link AUTH_BRAND_TOKENS}.
+ *
+ * Color roles: dark green surfaces/ink, lime CTAs and small emphasis.
  */
 export function createAuthTheme(mode: AuthPaletteMode): Theme {
   const {
@@ -24,8 +26,8 @@ export function createAuthTheme(mode: AuthPaletteMode): Theme {
     linkLight,
     linkHover,
     linkHoverLight,
-  } = AUTH_BRAND_TOKENS
-  const isDark = mode === 'dark'
+  } = AUTH_BRAND_TOKENS;
+  const isDark = mode === 'dark';
 
   return createTheme({
     palette: {
@@ -46,13 +48,13 @@ export function createAuthTheme(mode: AuthPaletteMode): Theme {
         primary: isDark ? '#f2f7f4' : primary,
         secondary: isDark ? alpha('#f2f7f4', 0.72) : alpha(primary, 0.72),
       },
-      divider: isDark ? alpha(secondary, 0.16) : alpha(primary, 0.12),
+      divider: isDark ? alpha(secondary, 0.2) : alpha(primary, 0.12),
       error: {
         main: isDark ? '#ff8a80' : '#c62828',
       },
       action: {
-        hover: isDark ? alpha(secondary, 0.08) : alpha(primary, 0.04),
-        selected: isDark ? alpha(secondary, 0.16) : alpha(primary, 0.08),
+        hover: isDark ? alpha(secondary, 0.1) : alpha(primary, 0.04),
+        selected: isDark ? alpha(secondary, 0.18) : alpha(primary, 0.08),
       },
     },
     typography: {
@@ -80,7 +82,9 @@ export function createAuthTheme(mode: AuthPaletteMode): Theme {
         styleOverrides: {
           root: {
             '& .MuiOutlinedInput-root': {
-              backgroundColor: isDark ? alpha('#ffffff', 0.04) : alpha(primary, 0.03),
+              backgroundColor: isDark
+                ? alpha('#ffffff', 0.04)
+                : alpha(primary, 0.03),
               ...(isDark ? { color: '#f2f7f4' } : {}),
               '& input, & textarea': {
                 ...(isDark ? { color: '#f2f7f4' } : {}),
@@ -94,10 +98,14 @@ export function createAuthTheme(mode: AuthPaletteMode): Theme {
                   transition: 'background-color 99999s ease-in-out 0s',
                 },
               '& fieldset': {
-                borderColor: isDark ? alpha(secondary, 0.22) : alpha(primary, 0.16),
+                borderColor: isDark
+                  ? alpha(secondary, 0.28)
+                  : alpha(primary, 0.16),
               },
               '&:hover fieldset': {
-                borderColor: isDark ? alpha(secondary, 0.4) : alpha(primary, 0.32),
+                borderColor: isDark
+                  ? alpha(secondary, 0.45)
+                  : alpha(primary, 0.32),
               },
               '&.Mui-focused fieldset': {
                 borderColor: secondary,
@@ -173,16 +181,12 @@ export function createAuthTheme(mode: AuthPaletteMode): Theme {
           {
             props: { variant: 'contained', color: 'primary' },
             style: {
-              backgroundColor: isDark ? secondary : primary,
-              color: isDark ? primary : '#f7faf8',
-              boxShadow: isDark
-                ? `0 4px 14px ${alpha(secondary, 0.2)}`
-                : `0 4px 14px ${alpha(primary, 0.16)}`,
+              backgroundColor: secondary,
+              color: primary,
+              boxShadow: `0 4px 14px ${alpha(secondary, 0.28)}`,
               '&:hover': {
-                backgroundColor: isDark ? '#d4ff2e' : '#074039',
-                boxShadow: isDark
-                  ? `0 6px 18px ${alpha(secondary, 0.28)}`
-                  : `0 6px 18px ${alpha(primary, 0.24)}`,
+                backgroundColor: '#E0FA8A',
+                boxShadow: `0 6px 18px ${alpha(secondary, 0.36)}`,
               },
             },
           },
@@ -256,21 +260,21 @@ export function createAuthTheme(mode: AuthPaletteMode): Theme {
           root: {
             minWidth: 44,
             minHeight: 44,
-            borderColor: isDark ? alpha(secondary, 0.22) : alpha(primary, 0.16),
+            borderColor: isDark ? alpha(secondary, 0.28) : alpha(primary, 0.16),
             color: isDark ? alpha('#f2f7f4', 0.72) : alpha(primary, 0.72),
             '&.Mui-selected': {
-              backgroundColor: isDark ? alpha(secondary, 0.18) : alpha(primary, 0.1),
-              color: isDark ? secondary : primary,
+              backgroundColor: alpha(secondary, 0.9),
+              color: primary,
               '&:hover': {
-                backgroundColor: isDark ? alpha(secondary, 0.26) : alpha(primary, 0.14),
+                backgroundColor: '#E0FA8A',
               },
             },
           },
         },
       },
     },
-  })
+  });
 }
 
 /** Default light theme (Storybook / legacy imports). */
-export const authTheme = createAuthTheme('light')
+export const authTheme = createAuthTheme('light');

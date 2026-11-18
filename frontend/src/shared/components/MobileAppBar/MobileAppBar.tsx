@@ -1,4 +1,11 @@
-import { useEffect, useId, useRef, useState, type CSSProperties } from 'react'
+import {
+  useCallback,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  type CSSProperties,
+} from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { MorphIcon } from 'morphicons/react'
@@ -148,13 +155,13 @@ function MobileAppBar({
     return { animationDelay: `${delayMs}ms` }
   }
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     clearFadeTimeout()
     setIsOpen(false)
     setPanelMode('nav')
     setMoreIconMode('nav')
     setNavFade('in')
-  }
+  }, [])
 
   const handleToggle = () => {
     if (isOpen) {
@@ -211,7 +218,7 @@ function MobileAppBar({
     return () => {
       document.removeEventListener('keydown', handleKeyDown)
     }
-  }, [isOpen])
+  }, [handleClose, isOpen])
 
   useEffect(() => {
     if (!isOpen) return

@@ -6,7 +6,6 @@ import {
   CalendarClock,
   Eye,
   Pencil,
-  Percent,
   Trash2,
   Wallet,
 } from 'lucide-react';
@@ -31,7 +30,7 @@ interface DemoLoan {
 const DEMO_ROWS: DemoLoan[] = [
   {
     id: 'LN-1001',
-    borrower: 'Ana Pérez',
+    borrower: 'Ana PÃ©rez',
     amount: '$1,200',
     frequency: 'Weekly',
     status: 'active',
@@ -45,28 +44,28 @@ const DEMO_ROWS: DemoLoan[] = [
   },
   {
     id: 'LN-1003',
-    borrower: 'María López',
+    borrower: 'MarÃ­a LÃ³pez',
     amount: '$2,400',
     frequency: 'Monthly',
     status: 'active',
   },
   {
     id: 'LN-1004',
-    borrower: 'José Díaz',
+    borrower: 'JosÃ© DÃ­az',
     amount: '$600',
     frequency: 'Weekly',
     status: 'closed',
   },
   {
     id: 'LN-1005',
-    borrower: 'Lucía Gómez',
+    borrower: 'LucÃ­a GÃ³mez',
     amount: '$1,050',
     frequency: 'Monthly',
     status: 'pending',
   },
   {
     id: 'LN-1006',
-    borrower: 'Pedro Núñez',
+    borrower: 'Pedro NÃºÃ±ez',
     amount: '$3,100',
     frequency: 'Biweekly',
     status: 'active',
@@ -115,7 +114,7 @@ const FILTERS: DataTableFilter[] = [
     multiple: false,
     options: [
       { value: 'low', label: 'Under $1,000' },
-      { value: 'mid', label: '$1,000 – $2,000' },
+      { value: 'mid', label: '$1,000 â€“ $2,000' },
       { value: 'high', label: 'Over $2,000' },
     ],
   },
@@ -251,7 +250,7 @@ function DataTablePlayground({
       data-theme={theme}
       style={{
         padding: 24,
-        background: theme === 'dark' ? '#0d0e12' : '#f7f5f1',
+        background: theme === 'dark' ? '#0A1424' : '#F4F7FB',
         minHeight: 520,
       }}
     >

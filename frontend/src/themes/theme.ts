@@ -126,10 +126,10 @@ export const theme = createTheme({
 
           '& input:-webkit-autofill, & input:-webkit-autofill:hover, & input:-webkit-autofill:focus, & input:-webkit-autofill:active, & textarea:-webkit-autofill, & textarea:-webkit-autofill:hover, & textarea:-webkit-autofill:focus, & textarea:-webkit-autofill:active':
             {
-              WebkitTextFillColor: 'var(--autofill-text, #2d3732)',
-              caretColor: 'var(--autofill-text, #2d3732)',
-              WebkitBoxShadow: '0 0 0 1000px var(--autofill-bg, #e8efe9) inset',
-              boxShadow: '0 0 0 1000px var(--autofill-bg, #e8efe9) inset',
+              WebkitTextFillColor: 'var(--autofill-text, #1E293B)',
+              caretColor: 'var(--autofill-text, #1E293B)',
+              WebkitBoxShadow: '0 0 0 1000px var(--autofill-bg, #E8EEF6) inset',
+              boxShadow: '0 0 0 1000px var(--autofill-bg, #E8EEF6) inset',
               transition: 'background-color 99999s ease-in-out 0s',
             },
         },

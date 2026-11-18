@@ -1,24 +1,24 @@
 import { createTheme } from '@mui/material/styles';
-
+import { BRAND_TOKENS } from '@/shared/themes/brand-tokens';
 
 export const theme = createTheme({
   palette: {
     mode: 'light',
     primary: {
-      main: '#063832',
-      contrastText: '#f7f5f1',
+      main: BRAND_TOKENS.primary,
+      contrastText: BRAND_TOKENS.onPrimary,
     },
     secondary: {
-      main: '#caff05',
-      dark: '#b8e800',
-      contrastText: '#063832',
+      main: BRAND_TOKENS.secondary,
+      dark: BRAND_TOKENS.secondaryDark,
+      contrastText: BRAND_TOKENS.primary,
     },
     background: {
-      default: '#faf8f5',
+      default: BRAND_TOKENS.backgroundLight,
       paper: '#ffffff',
     },
     text: {
-      primary: '#1a1c20',
+      primary: BRAND_TOKENS.ink,
       secondary: '#6b7280',
     },
     error: {
@@ -27,10 +27,10 @@ export const theme = createTheme({
   },
   typography: {
     fontFamily: "'Inter', system-ui, -apple-system, sans-serif",
-    h1: { fontWeight: 700, letterSpacing: '-0.02em' },
-    h2: { fontWeight: 700, letterSpacing: '-0.02em' },
-    h3: { fontWeight: 700, letterSpacing: '-0.01em' },
-    h4: { fontWeight: 700, letterSpacing: '-0.01em' },
+    h1: { fontWeight: 700, letterSpacing: '-0.02em', color: BRAND_TOKENS.ink },
+    h2: { fontWeight: 700, letterSpacing: '-0.02em', color: BRAND_TOKENS.ink },
+    h3: { fontWeight: 700, letterSpacing: '-0.01em', color: BRAND_TOKENS.ink },
+    h4: { fontWeight: 700, letterSpacing: '-0.01em', color: BRAND_TOKENS.ink },
     button: { textTransform: 'none', fontWeight: 600 },
   },
   shape: {
@@ -46,13 +46,18 @@ export const theme = createTheme({
           textTransform: 'none',
           fontWeight: 600,
           borderRadius: 10,
-          transition: 'background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease',
+          transition:
+            'background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease',
           '@media (prefers-reduced-motion: reduce)': {
             transition: 'none',
           },
         },
-        containedSecondary: {
+        /** CTAs use lime (secondary), matching surface/button split in brand UI. */
+        containedPrimary: {
+          backgroundColor: BRAND_TOKENS.secondary,
+          color: BRAND_TOKENS.primary,
           '&:hover': {
+            backgroundColor: BRAND_TOKENS.secondaryDark,
             transform: 'translateY(-1px)',
           },
           '@media (prefers-reduced-motion: reduce)': {
@@ -60,6 +65,26 @@ export const theme = createTheme({
               transform: 'none',
             },
           },
+        },
+        containedSecondary: {
+          backgroundColor: BRAND_TOKENS.secondary,
+          color: BRAND_TOKENS.primary,
+          '&:hover': {
+            backgroundColor: BRAND_TOKENS.secondaryDark,
+            transform: 'translateY(-1px)',
+          },
+          '@media (prefers-reduced-motion: reduce)': {
+            '&:hover': {
+              transform: 'none',
+            },
+          },
+        },
+      },
+    },
+    MuiSvgIcon: {
+      styleOverrides: {
+        root: {
+          color: 'inherit',
         },
       },
     },

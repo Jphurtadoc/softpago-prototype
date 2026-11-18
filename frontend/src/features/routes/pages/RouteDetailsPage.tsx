@@ -95,7 +95,10 @@ export default function RouteDetailsPage() {
       return
     }
 
-    void loadRouteData()
+    const handle = window.setTimeout(() => {
+      void loadRouteData()
+    }, 0)
+    return () => window.clearTimeout(handle)
   }, [id, loadRouteData])
 
   const assignedDebtCollectors = useMemo(

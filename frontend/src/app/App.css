@@ -2,24 +2,46 @@
   min-height: 100vh;
 }
 
-/* Secondary lime ambient mesh — same structure as prior orange/green lights */
+/* Subtle green-gray ambient mesh — low saturation */
 .app[data-theme='dark'] {
-  background-color: #0d0e12;
+  background-color: #121416;
   background-image:
-    radial-gradient(ellipse 620px 480px at 14% 16%, rgba(202, 255, 5, 0.08), transparent 60%),
-    radial-gradient(ellipse 620px 520px at 88% 84%, rgba(202, 255, 5, 0.06), transparent 60%),
-    radial-gradient(circle, rgba(241, 239, 233, 0.04) 1px, transparent 1px);
-  background-size: auto, auto, 22px 22px;
+    radial-gradient(
+      ellipse 620px 480px at 14% 16%,
+      rgba(255, 255, 255, 0.04),
+      transparent 60%
+    ),
+    radial-gradient(
+      ellipse 620px 520px at 88% 84%,
+      rgba(213, 247, 85, 0.05),
+      transparent 60%
+    ),
+    radial-gradient(circle, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size:
+    auto,
+    auto,
+    22px 22px;
   background-repeat: no-repeat, no-repeat, repeat;
 }
 
 .app[data-theme='light'] {
-  background-color: #f7f5f1;
+  background-color: #F4F4F5;
   background-image:
-    radial-gradient(ellipse 620px 480px at 14% 16%, rgba(202, 255, 5, 0.14), transparent 60%),
-    radial-gradient(ellipse 620px 520px at 88% 84%, rgba(202, 255, 5, 0.11), transparent 60%),
-    radial-gradient(circle, rgba(20, 22, 26, 0.05) 1px, transparent 1px);
-  background-size: auto, auto, 22px 22px;
+    radial-gradient(
+      ellipse 620px 480px at 14% 16%,
+      rgba(20, 22, 26, 0.04),
+      transparent 60%
+    ),
+    radial-gradient(
+      ellipse 620px 520px at 88% 84%,
+      rgba(213, 247, 85, 0.05),
+      transparent 60%
+    ),
+    radial-gradient(circle, rgba(20, 22, 26, 0.045) 1px, transparent 1px);
+  background-size:
+    auto,
+    auto,
+    22px 22px;
   background-repeat: no-repeat, no-repeat, repeat;
 }
 
@@ -32,7 +54,9 @@
   min-width: 0;
   box-sizing: border-box;
   font-family: 'Inter', system-ui, sans-serif;
-  transition: margin-left 0.32s cubic-bezier(0.32, 0.72, 0, 1), color 0.3s ease;
+  transition:
+    margin-left 0.32s cubic-bezier(0.32, 0.72, 0, 1),
+    color 0.3s ease;
 }
 
 .app[data-theme='dark'] .app__content {
@@ -60,12 +84,12 @@ html[data-theme='dark'] .MuiButton-outlined.MuiButton-colorPrimary:hover {
 
 .app[data-theme='dark'] .MuiButton-contained.MuiButton-colorPrimary,
 html[data-theme='dark'] .MuiButton-contained.MuiButton-colorPrimary {
-  background-color: #ffffff !important;
-  color: #063832 !important;
+  background-color: #D5F755 !important;
+  color: #1D4837 !important;
 }
 
 .app[data-theme='dark'] .MuiButton-contained.MuiButton-colorPrimary:hover,
 html[data-theme='dark'] .MuiButton-contained.MuiButton-colorPrimary:hover {
-  background-color: #f4f2ec !important;
-  color: #063832 !important;
+  background-color: #E0FA8A !important;
+  color: #1D4837 !important;
 }

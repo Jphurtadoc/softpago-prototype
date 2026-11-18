@@ -1,6 +1,6 @@
 .detail-surface {
-  --ds-brand: #063832;
-  --ds-lime: #caff05;
+  --ds-brand: #1D4837;
+  --ds-lime: #D5F755;
   --ds-surface: #ffffff;
   --ds-surface-muted: #f3f4f1;
   --ds-text: #14161a;
@@ -10,17 +10,17 @@
   --ds-radius: 22px;
   --ds-radius-sm: 14px;
   --ds-focus: color-mix(in srgb, var(--ds-brand) 35%, transparent);
-  --ds-accent: var(--ds-brand);
-  --ds-accent-ink: #f7f5f1;
+  --ds-accent: var(--ds-lime);
+  --ds-accent-ink: #1D4837;
   --ds-icon-bg: color-mix(in srgb, var(--ds-brand) 10%, #eef2ef);
   --ds-icon-fg: var(--ds-brand);
   --ds-track: rgba(20, 22, 26, 0.08);
-  --ds-progress: var(--ds-brand);
+  --ds-progress: var(--ds-lime);
   /* Shared with DataTableStatusChip tone tokens */
   --dt-tone-neutral-fg: #4b5563;
   --dt-tone-neutral-bg: rgba(20, 22, 26, 0.06);
-  --dt-tone-brand-fg: #063832;
-  --dt-tone-brand-bg: color-mix(in srgb, #063832 12%, #eef2ef);
+  --dt-tone-brand-fg: #1D4837;
+  --dt-tone-brand-bg: color-mix(in srgb, #1D4837 12%, #eef2ef);
   --dt-tone-success-fg: #15803d;
   --dt-tone-success-bg: color-mix(in srgb, #16a34a 16%, #ecfdf3);
   --dt-tone-warning-fg: #b45309;
@@ -42,31 +42,31 @@
 }
 
 .app[data-theme='dark'] .detail-surface {
-  --ds-surface: #15171c;
-  --ds-surface-muted: #1e2128;
+  --ds-surface: #1A1C20;
+  --ds-surface-muted: #22252B;
   --ds-text: #f4f2ec;
-  --ds-text-muted: #a1a7b3;
-  --ds-border: rgba(255, 255, 255, 0.07);
-  --ds-shadow: 0 18px 48px rgba(0, 0, 0, 0.45);
+  --ds-text-muted: #a3b5ac;
+  --ds-border: rgba(213, 247, 85, 0.08);
+  --ds-shadow: 0 18px 48px rgba(8, 16, 12, 0.5);
   --ds-focus: color-mix(in srgb, var(--ds-lime) 40%, transparent);
   --ds-accent: var(--ds-lime);
-  --ds-accent-ink: #063832;
-  --ds-icon-bg: color-mix(in srgb, var(--ds-lime) 16%, #1e2128);
+  --ds-accent-ink: #1D4837;
+  --ds-icon-bg: color-mix(in srgb, var(--ds-lime) 16%, #22252B);
   --ds-icon-fg: var(--ds-lime);
-  --ds-track: rgba(255, 255, 255, 0.08);
+  --ds-track: rgba(245, 246, 244, 0.1);
   --ds-progress: var(--ds-lime);
   --dt-tone-neutral-fg: #c4c9d4;
-  --dt-tone-neutral-bg: rgba(255, 255, 255, 0.08);
+  --dt-tone-neutral-bg: rgba(245, 246, 244, 0.08);
   --dt-tone-brand-fg: var(--ds-lime);
-  --dt-tone-brand-bg: color-mix(in srgb, var(--ds-lime) 16%, #1e2128);
+  --dt-tone-brand-bg: color-mix(in srgb, var(--ds-lime) 16%, #22252B);
   --dt-tone-success-fg: #4ade80;
-  --dt-tone-success-bg: color-mix(in srgb, #4ade80 18%, #15171c);
+  --dt-tone-success-bg: color-mix(in srgb, #4ade80 18%, #1A1C20);
   --dt-tone-warning-fg: #fbbf24;
-  --dt-tone-warning-bg: color-mix(in srgb, #f59e0b 18%, #1e2128);
+  --dt-tone-warning-bg: color-mix(in srgb, #f59e0b 18%, #22252B);
   --dt-tone-danger-fg: #f87171;
-  --dt-tone-danger-bg: color-mix(in srgb, #f87171 16%, #15171c);
+  --dt-tone-danger-bg: color-mix(in srgb, #f87171 16%, #1A1C20);
   --dt-tone-info-fg: #93c5fd;
-  --dt-tone-info-bg: color-mix(in srgb, #3b82f6 18%, #15171c);
+  --dt-tone-info-bg: color-mix(in srgb, #3b82f6 18%, #1A1C20);
 }
 
 .detail-surface__state {
@@ -431,12 +431,12 @@
 }
 
 .app[data-theme='dark'] .detail-surface__hero--accent {
-  background: color-mix(in srgb, var(--ds-brand) 50%, #15171c);
+  background: color-mix(in srgb, var(--ds-brand) 50%, #1A1C20);
   border: 1px solid var(--ds-border);
   color: var(--ds-text);
   --ds-text: #f4f2ec;
   --ds-text-muted: #a1a7b3;
-  --ds-icon-bg: color-mix(in srgb, var(--ds-lime) 16%, #1e2128);
+  --ds-icon-bg: color-mix(in srgb, var(--ds-lime) 16%, #22252B);
   --ds-icon-fg: var(--ds-lime);
   --ds-track: rgba(255, 255, 255, 0.08);
   --ds-progress: var(--ds-lime);
@@ -514,7 +514,8 @@
   color: var(--ds-brand);
 }
 
-.app[data-theme='dark'] .detail-surface__tab:hover:not(.detail-surface__tab--active) {
+.app[data-theme='dark']
+  .detail-surface__tab:hover:not(.detail-surface__tab--active) {
   background: color-mix(in srgb, var(--ds-lime) 18%, transparent);
   color: var(--ds-lime);
 }

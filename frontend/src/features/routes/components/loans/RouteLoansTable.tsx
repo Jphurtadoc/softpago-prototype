@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Eye, Pencil, Trash2 } from 'lucide-react'
 import {
@@ -50,11 +50,11 @@ export default function RouteLoansTable({
   const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(10)
 
-  const handleOpenEdit = (loan: RouteLoan) => {
+  const handleOpenEdit = useCallback((loan: RouteLoan) => {
     setEditingLoan(loan)
     setAmount(String(loan.amount))
     setError('')
-  }
+  }, [])
 
   const handleCloseEdit = () => {
     if (loading) {
@@ -98,28 +98,31 @@ export default function RouteLoansTable({
     }
   }
 
-  const handleRemove = async (loanId: string) => {
-    const confirmed = window.confirm(t('loans.confirmRemove'))
+  const handleRemove = useCallback(
+    async (loanId: string) => {
+      const confirmed = window.confirm(t('loans.confirmRemove'))
 
-    if (!confirmed) {
-      return
-    }
+      if (!confirmed) {
+        return
+      }
 
-    try {
-      setLoading(true)
-      setError('')
-      await routesService.removeLoan(routeId, loanId)
-      onChange()
-    } catch (requestError) {
-      const message =
-        requestError instanceof Error
-          ? requestError.message
-          : t('loans.removeError')
-      setError(message)
-    } finally {
-      setLoading(false)
-    }
-  }
+      try {
+        setLoading(true)
+        setError('')
+        await routesService.removeLoan(routeId, loanId)
+        onChange()
+      } catch (requestError) {
+        const message =
+          requestError instanceof Error
+            ? requestError.message
+            : t('loans.removeError')
+        setError(message)
+      } finally {
+        setLoading(false)
+      }
+    },
+    [onChange, routeId, t],
+  )
 
   const columns = useMemo<DataTableColumn<RouteLoan>[]>(
     () => [
@@ -169,7 +172,7 @@ export default function RouteLoansTable({
         disabled: () => loading,
       },
     ],
-    [loading, t],
+    [handleRemove, handleOpenEdit, loading, t],
   )
 
   const pagedLoans = useMemo(

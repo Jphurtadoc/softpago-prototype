@@ -85,7 +85,10 @@ export function SettingsUsersPanel() {
   }, [page, rowsPerPage, search, statusFilter, t])
 
   useEffect(() => {
-    void loadUsers()
+    const handle = window.setTimeout(() => {
+      void loadUsers()
+    }, 0)
+    return () => window.clearTimeout(handle)
   }, [loadUsers])
 
   const columns = useMemo<DataTableColumn<SystemUser>[]>(

@@ -120,6 +120,17 @@ export function DataTable<T>({
   const [openAccordionId, setOpenAccordionId] = useState<string | null>(
     filters[0]?.id ?? null,
   );
+  const filtersSignature = filters.map((filter) => filter.id).join('\0');
+  const [prevFiltersSignature, setPrevFiltersSignature] =
+    useState(filtersSignature);
+  if (filtersSignature !== prevFiltersSignature) {
+    setPrevFiltersSignature(filtersSignature);
+    if (filters.length === 0) {
+      setOpenAccordionId(null);
+    } else if (!filters.some((filter) => filter.id === openAccordionId)) {
+      setOpenAccordionId(filters[0]?.id ?? null);
+    }
+  }
   const [openActionsRowKey, setOpenActionsRowKey] = useState<string | null>(null);
 
   const pageKeys = useMemo(() => data.map((item) => rowKey(item)), [data, rowKey]);
@@ -157,18 +168,6 @@ export function DataTable<T>({
     lastSyncedPageRef.current = safePage;
     onPageChange(safePage);
   }, [onPageChange, page, safePage]);
-
-  useEffect(() => {
-    if (filters.length === 0) {
-      setOpenAccordionId(null);
-      return;
-    }
-    setOpenAccordionId((current) =>
-      current && filters.some((filter) => filter.id === current)
-        ? current
-        : (filters[0]?.id ?? null),
-    );
-  }, [filters]);
 
   useEffect(() => {
     if (!isFilterMenuOpen && openActionsRowKey === null) return;

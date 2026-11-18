@@ -21,7 +21,14 @@ export default defineConfig([
     rules: {
       'react-refresh/only-export-components': [
         'error',
-        { allowConstantExport: true },
+        {
+          allowConstantExport: true,
+          allowExportNames: [
+            'useColorMode',
+            'useSidebarBehavior',
+            'useAuthColorMode',
+          ],
+        },
       ],
     },
   },

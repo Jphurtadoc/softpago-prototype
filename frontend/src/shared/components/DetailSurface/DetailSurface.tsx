@@ -209,7 +209,7 @@ export function DetailTabs({
     if (tabs.length === 0) {
       return
     }
-    let nextIndex = index
+    let nextIndex: number
     if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
       event.preventDefault()
       nextIndex = (index + 1) % tabs.length

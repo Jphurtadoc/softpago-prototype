@@ -1,4 +1,11 @@
-import { useEffect, useId, useRef, useState, type ReactNode } from 'react'
+import {
+  useCallback,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  type ReactNode,
+} from 'react'
 import { useTranslation } from 'react-i18next'
 import {
   THEME_MODE_ICONS,
@@ -179,12 +186,15 @@ function Navbar({
     THEME_OPTIONS.findIndex((option) => option === currentPreference),
   )
 
-  const setExpanded = (next: boolean) => {
-    if (isExpanded === undefined) {
-      setInternalExpanded(next)
-    }
-    onExpandedChange?.(next)
-  }
+  const setExpanded = useCallback(
+    (next: boolean) => {
+      if (isExpanded === undefined) {
+        setInternalExpanded(next)
+      }
+      onExpandedChange?.(next)
+    },
+    [isExpanded, onExpandedChange],
+  )
 
   const handleMouseEnter = () => {
     setIsHovered(true)
@@ -212,16 +222,19 @@ function Navbar({
 
   useEffect(() => {
     if (isUserMenuOpen) return
-    if (sidebarBehavior === 'fixed') {
-      setExpanded(true)
-      return
-    }
-    if (sidebarBehavior === 'collapse') {
-      setExpanded(false)
-      return
-    }
-    setExpanded(isHovered)
-  }, [sidebarBehavior, isUserMenuOpen, isHovered])
+    const handle = window.setTimeout(() => {
+      if (sidebarBehavior === 'fixed') {
+        setExpanded(true)
+        return
+      }
+      if (sidebarBehavior === 'collapse') {
+        setExpanded(false)
+        return
+      }
+      setExpanded(isHovered)
+    }, 0)
+    return () => window.clearTimeout(handle)
+  }, [sidebarBehavior, isUserMenuOpen, isHovered, setExpanded])
 
   const handleThemeSelect = (next: ThemePreference) => {
     if (themePreference === undefined) {
@@ -240,7 +253,7 @@ function Navbar({
     onItemClick?.(item)
   }
 
-  const handleCloseUserMenu = () => {
+  const handleCloseUserMenu = useCallback(() => {
     setIsUserMenuOpen(false)
     if (sidebarBehavior === 'fixed') {
       setExpanded(true)
@@ -251,7 +264,7 @@ function Navbar({
       return
     }
     setExpanded(false)
-  }
+  }, [isHovered, setExpanded, sidebarBehavior])
 
   const handleOpenUserMenu = () => {
     setIsUserMenuOpen(true)
@@ -286,7 +299,7 @@ function Navbar({
       document.removeEventListener('mousedown', handlePointerDown)
       document.removeEventListener('keydown', handleKeyDown)
     }
-  }, [isUserMenuOpen])
+  }, [handleCloseUserMenu, isUserMenuOpen])
 
   return (
     <aside

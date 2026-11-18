@@ -2,14 +2,14 @@
   --mab-bar-height: 56px;
   --mab-ink: #e8e6e0;
   --mab-ink-muted: #767c8c;
-  --mab-primary: #063832;
-  --mab-secondary: #caff05;
-  --mab-surface: #0d0e12;
-  --mab-glass: #0d0e12;
+  --mab-primary: #1D4837;
+  --mab-secondary: #D5F755;
+  --mab-surface: #15171C;
+  --mab-glass: #15171C;
   --mab-glass-border: rgba(255, 255, 255, 0.08);
-  --mab-item-hover: rgba(202, 255, 5, 0.12);
+  --mab-item-hover: rgba(213, 247, 85, 0.12);
   --mab-card-bg: rgba(255, 255, 255, 0.06);
-  --mab-toggle: #caff05;
+  --mab-toggle: #D5F755;
   --mab-bar-border: rgba(255, 255, 255, 0.08);
   --mab-bar-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
 
@@ -26,20 +26,20 @@
   --mab-ink: #e8e6e0;
   --mab-ink-muted: #a8adb8;
   --mab-surface: #f7f5f1;
-  --mab-glass: #0d0e12;
-  --mab-glass-border: rgba(255, 255, 255, 0.1);
-  --mab-item-hover: rgba(202, 255, 5, 0.12);
+  --mab-glass: #15171C;
+  --mab-glass-border: rgba(213, 247, 85, 0.12);
+  --mab-item-hover: rgba(213, 247, 85, 0.12);
   --mab-toggle: var(--mab-primary);
-  --mab-bar-border: rgba(20, 22, 26, 0.08);
-  --mab-bar-shadow: 0 8px 20px rgba(20, 22, 26, 0.08);
+  --mab-bar-border: rgba(29, 72, 55, 0.1);
+  --mab-bar-shadow: 0 8px 20px rgba(29, 72, 55, 0.08);
 }
 
 .mobile-appbar[data-theme='light'][data-open='true'],
 .mobile-appbar[data-theme='light'].mobile-appbar--solid[data-open='true'] {
-  --mab-surface: #0d0e12;
-  --mab-toggle: #caff05;
-  --mab-bar-border: rgba(255, 255, 255, 0.08);
-  --mab-bar-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+  --mab-surface: #15171C;
+  --mab-toggle: #D5F755;
+  --mab-bar-border: rgba(213, 247, 85, 0.1);
+  --mab-bar-shadow: 0 8px 24px rgba(8, 16, 12, 0.35);
 }
 
 .mobile-appbar__bar {
@@ -50,14 +50,15 @@
   justify-content: space-between;
   gap: 12px;
   height: var(--mab-bar-height);
-  padding:
-    max(8px, env(safe-area-inset-top))
-    max(16px, env(safe-area-inset-right))
-    8px
+  padding: max(8px, env(safe-area-inset-top))
+    max(16px, env(safe-area-inset-right)) 8px
     max(16px, env(safe-area-inset-left));
   box-sizing: border-box;
   background: transparent;
-  transition: background-color 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease;
   pointer-events: auto;
 }
 
@@ -68,7 +69,7 @@
 }
 
 .mobile-appbar[data-open='true'] .mobile-appbar__bar {
-  background: #0d0e12;
+  background: #15171C;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
 }
@@ -103,19 +104,23 @@
   color: var(--mab-toggle);
   cursor: pointer;
   pointer-events: auto;
-  transition: background-color 180ms ease, color 180ms ease;
+  transition:
+    background-color 180ms ease,
+    color 180ms ease;
 }
 
 .mobile-appbar__toggle:hover {
-  background: rgba(202, 255, 5, 0.12);
+  background: rgba(213, 247, 85, 0.12);
 }
 
-.mobile-appbar[data-theme='light']:not([data-open='true']) .mobile-appbar__toggle:hover {
+.mobile-appbar[data-theme='light']:not([data-open='true'])
+  .mobile-appbar__toggle:hover {
   background: rgba(6, 56, 50, 0.08);
 }
 
-.mobile-appbar[data-theme='light'][data-open='true'] .mobile-appbar__toggle:hover {
-  background: rgba(202, 255, 5, 0.12);
+.mobile-appbar[data-theme='light'][data-open='true']
+  .mobile-appbar__toggle:hover {
+  background: rgba(213, 247, 85, 0.12);
 }
 
 .mobile-appbar__toggle:focus-visible {
@@ -139,7 +144,9 @@
 }
 
 .mobile-appbar__panel--open {
-  max-height: calc(100dvh - var(--mab-bar-height) - env(safe-area-inset-top, 0px));
+  max-height: calc(
+    100dvh - var(--mab-bar-height) - env(safe-area-inset-top, 0px)
+  );
   opacity: 1;
   transform: translateY(0);
   pointer-events: auto;
@@ -147,12 +154,11 @@
 
 .mobile-appbar__panel-inner {
   margin: 0;
-  min-height: calc(100dvh - var(--mab-bar-height) - env(safe-area-inset-top, 0px));
-  padding:
-    10px
-    max(12px, env(safe-area-inset-right))
-    max(16px, env(safe-area-inset-bottom))
-    max(12px, env(safe-area-inset-left));
+  min-height: calc(
+    100dvh - var(--mab-bar-height) - env(safe-area-inset-top, 0px)
+  );
+  padding: 10px max(12px, env(safe-area-inset-right))
+    max(16px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
   border-bottom: 1px solid var(--mab-glass-border);
   background: var(--mab-glass);
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
@@ -225,7 +231,9 @@
   opacity: 0;
   transform: translateX(-10px);
   pointer-events: none;
-  transition: opacity 160ms ease, transform 160ms ease;
+  transition:
+    opacity 160ms ease,
+    transform 160ms ease;
 }
 
 .mobile-appbar__item[data-fade='in'],
@@ -352,7 +360,8 @@
   height: 32px;
   border-radius: 50%;
   overflow: hidden;
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--mab-secondary) 35%, transparent);
+  box-shadow: 0 0 0 2px
+    color-mix(in srgb, var(--mab-secondary) 35%, transparent);
 }
 
 .mobile-appbar__avatar img {
@@ -438,7 +447,9 @@
   background: transparent;
   color: var(--mab-ink-muted);
   cursor: pointer;
-  transition: background-color 180ms ease, color 180ms ease;
+  transition:
+    background-color 180ms ease,
+    color 180ms ease;
 }
 
 .mobile-appbar__user-more:hover,

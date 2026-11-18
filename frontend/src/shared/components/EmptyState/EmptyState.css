@@ -1,6 +1,6 @@
 .empty-state {
-  --es-brand: #063832;
-  --es-lime: #caff05;
+  --es-brand: #1D4837;
+  --es-lime: #D5F755;
   --es-surface-muted: #f3f4f1;
   --es-text: #14161a;
   --es-text-muted: #6b7280;
@@ -20,7 +20,7 @@
 }
 
 .app[data-theme='dark'] .empty-state {
-  --es-surface-muted: #1e2128;
+  --es-surface-muted: #22252B;
   --es-text: #f4f2ec;
   --es-text-muted: #a1a7b3;
 }

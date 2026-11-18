@@ -2,11 +2,7 @@ import { useState } from 'react';
 import { Alert, Box, Button, Link, Stack, TextField } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
 
-interface SignUpFormProps {
-  onSuccess?: () => void;
-}
-
-export default function SignUpForm(_props: SignUpFormProps) {
+export default function SignUpForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);

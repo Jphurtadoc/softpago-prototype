@@ -3,15 +3,15 @@
 @source "./src/**/*.{ts,tsx,js,jsx}";
 
 @theme {
-  --color-bg-base: #f4f7f5;
+  --color-bg-base: #f5f6f4;
   --color-bg-surface: #ffffff;
 
-  --color-text-main: #2d3732;
-  --color-text-muted: #6b7c74;
+  --color-text-main: #2c3330;
+  --color-text-muted: #6b7280;
 
-  --color-sage-light: #e2ebd5;
-  --color-sage-main: #7a927e;
-  --color-sage-dark: #3a4d42;
+  --color-sage-light: #e3ebe6;
+  --color-sage-main: #d5f755;
+  --color-sage-dark: #1d4837;
 }
 
 @layer base {
